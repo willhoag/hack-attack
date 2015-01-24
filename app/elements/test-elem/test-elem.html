@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/core-icon/core-icon.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/pvc-globals/pvc-globals.html">
 
 <polymer-element name="test-elem" attributes="game_id">
@@ -22,6 +23,7 @@
     <header>
       <h1>{{mainTitle}}</h1>
       <p>{{comment}}</p>
+      <paper-icon-button id="btn_editSettings" icon="settings" on-tap="{{buttonNextTurn}}"></paper-icon-button>
     </header>
     <paper-input label="mainTitle" value="{{mainTitle}}"></paper-input>
     <paper-input label="comment" value="{{comment}}"></paper-input>
