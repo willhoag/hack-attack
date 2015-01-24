@@ -4,7 +4,7 @@ Hacker Game (working title)
 Story
 ---------------------------
 Corporation XYZ has been up to no good, gathering data from their competitor 
-unsuspecitingly.  You and your fellow hackers have been employeed separately to 
+unsuspectingly.  You and your fellow hackers have been employed separately to 
 gain access to XYZ's data servers, extract the data, and expose their acts to
 the authorities.
 
@@ -12,7 +12,7 @@ the authorities.
 How To Play
 ---------------------------
 ### Goal
-You want hack more servers and gather more data than your opponent, before the end of the game.
+Gain access to servers and gather more data than your opponent, before the end of the game.
 
 
 ### Setup
@@ -35,9 +35,9 @@ Attacking consists of guessing the admin password to gain access to data.
   - A player can connect/attack a server with multiple networks *Limit of 3 connections.*
 - 3 connections allow a faster hack, 1 connection a slower hack
   - For the attack, another player shuffles and draws cards from the "brute force" deck, keeping them in the order drawn (this creates a random number)
-  - 1 connection = 3 cards (10 guesses)
-  - 2 connection = 2 cards (5 guesses)
-  - 3 connections = 1 card (3 guesses)
+  - 1 connection = 3 digits (9 guesses)
+  - 2 connection = 2 digits (6 guesses)
+  - 3 connections = 1 digit (3 guesses)
 - The current player must guess the value, with the allotted guesses allowed.
 - The other player must inform the current player if the value is either correct, higher or lower.
 - The number of guesses determines the amount of "data" extracted from the server (must figure out some good math)
