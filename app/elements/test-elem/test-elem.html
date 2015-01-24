@@ -20,10 +20,10 @@
     </firebase-element>
     <pvc-globals values="{{globals}}"></pvc-globals>
     <header>
-      <h1>{{gameTitle}}</h1>
+      <h1>{{mainTitle}}</h1>
       <p>{{comment}}</p>
     </header>
-    <paper-input label="title" value="{{gameTitle}}"></paper-input>
+    <paper-input label="mainTitle" value="{{mainTitle}}"></paper-input>
     <paper-input label="comment" value="{{comment}}"></paper-input>
     <paper-button raised
       on-tap="{{buttonNextTurn}}">
@@ -56,7 +56,7 @@
       Polymer({
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "myGame1",
-        gameTitle : "Default Game Title",
+        mainTitle : "Default Game Title",
         comment : "abc",
 
         // polymer events
@@ -67,12 +67,13 @@
         // Methods
         resetGame : function () {
           this.data = {
+            mainTitle : "Default Game Title",
+            comment : "",
             turn : 0,
             points : {
               p1 : 0,
               p2 : 0
-            },
-            comment : ""
+            }
           }
         },
         setNextTurn : function () {
@@ -107,8 +108,8 @@
         },
 
         // Observers
-        titleChanged : function (oldValue, newValue) {
-          this.data.gameTitle = newValue;
+        mainTitleChanged : function (oldValue, newValue) {
+          this.data.mainTitle = newValue;
         },
         commentChanged : function (oldValue, newValue) {
           this.data.comment = newValue;
