@@ -14,6 +14,7 @@ How To Play
 ### Goal
 You want hack more servers and gather more data than your opponent, before the end of the game.
 
+
 ### Setup
 - Each player is given 10 botservers cards to perform hacks.
 - Create 3 decks, 10 cards each of "admin cards".  These represent the _target servers_ to be attacked
@@ -29,18 +30,19 @@ On a player's turn, they must wire their botservers to attack the target servers
 **2) Attacking:**
 Attacking consists of guessing the admin password to gain access to data.
 
-- For each botserver stack, choose a server to attack.
+- For each network, choose a server to attack.
   - Wiring botservers can be wired directly to a target server, or chained for safer attacks.
-- For each direct connection to a target server, an attack occurs.  Limit of 5 connections.
-- 5 connections allow a faster hack, 1 connection a slower hack
+  - A player can connect/attack a server with multiple networks *Limit of 3 connections.*
+- 3 connections allow a faster hack, 1 connection a slower hack
   - For the attack, another player shuffles and draws cards from the "brute force" deck, keeping them in the order drawn (this creates a random number)
-  - 1 connection = 5 cards
-  - 2 connection = 4 cards
-  - ...
-  - 5 connections = 1 card
-- The current player must guess the value
-- The other player must inform the current player if the value is correct, higher or lower.
+  - 1 connection = 3 cards (10 guesses)
+  - 2 connection = 2 cards (5 guesses)
+  - 3 connections = 1 card (3 guesses)
+- The current player must guess the value, with the allotted guesses allowed.
+- The other player must inform the current player if the value is either correct, higher or lower.
 - The number of guesses determines the amount of "data" extracted from the server (must figure out some good math)
+
+> I'm not completely comfortable with this yet... still working out the data point scheme
 
 **3) Admin:**
 After each attack, the player draws cards from the admin deck 
@@ -48,18 +50,43 @@ After each attack, the player draws cards from the admin deck
 - After the attack, the number of connections on that server, determines the number of cards must be drawn from the "Admin deck".
 - The more cards drawn, the more dangerous it is for the hacker
 
-> Admin Cards contain both good and bad things for hackers
+> Admin Cards contain both good and bad things for hackers, but mostly bad.
+
+
+### Game End
+The game can end in one of 3 ways:
+
+1. All the servers have gone offline.  The player with the most *data* wins.
+2. A player obtains 10 pieces of data.
+3. A player is identified by the test server admin.
+
 
 
 More Info
 ---------------------------
+### Game Pieces
+__bot server__: 
+A single computer used to network and attack the target servers
+
+__network__:
+A chain of "bot servers" which allow your identity to be obscured
+
+__target server__:
+A server in which the players are trying to obtain *data*.
+
+__data__:
+Data is the reward for hacking a target server successfully.  Additional data can be earned from the admin deck.
+
+
 ### Admin Cards
 Each target server has it's own deck.  Once the deck runs out, that server goes
 offline.  Drawn cards are kept by the player, unless the card says otherwise.
 
-- Gained extra data (user holds card)
-- Hack detected, connected botservers are reported and shutdown. (discarded publically)
-- Admin changed password, no data found. (user holds card)
+- GOOD: Gained extra data (user holds card)
+- GOOD: Inside info acquired. (discard during hacking phase to get an extra hacking guess)
+- NEUTRAL: Admin changed password, no data accessed. (user holds card)
+- BAD: Hack detected, connected botservers are reported and shutdown. (discarded publicly)
+- BAD: Hack detected, connected botservers are reported and shutdown. (discarded publicly)
 
 
 ### Brute Force Cards
