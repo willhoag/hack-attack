@@ -1,0 +1,144 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-element.html">
+<link rel="import" href="../../bower_components/core-input/core-input.html">
+<link rel="import" href="../../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/pvc-globals/pvc-globals.html">
+
+<polymer-element name="test-elem" attributes="game_id">
+  <template>
+    <link rel="stylesheet" href="test-elem.css">
+
+    <firebase-element id="base"
+      location="{{globals.firebase}}"
+      data="{{data}}"
+      keys="{{keys}}"
+      childEvents
+      on-child-changed={{childUpdated}}
+      >
+    </firebase-element>
+    <pvc-globals values="{{globals}}"></pvc-globals>
+    <header>
+      <h1>{{gameTitle}}</h1>
+      <p>{{comment}}</p>
+    </header>
+    <paper-input label="title" value="{{gameTitle}}"></paper-input>
+    <paper-input label="comment" value="{{comment}}"></paper-input>
+    <paper-button raised
+      on-tap="{{buttonNextTurn}}">
+      <core-icon icon="arrow-forward"></core-icon>
+      next turn
+    </paper-button>
+    <paper-button raised
+      on-tap="{{buttonP1addPoint}}">
+      <core-icon icon="add-circle"></core-icon> Player1: Add Point
+    </paper-button>
+    <paper-button raised
+      on-tap="{{buttonP2addPoint}}">
+      <core-icon icon="add-circle"></core-icon> Player2: Add Point
+    </paper-button>
+    <paper-button raised
+      on-tap="{{buttonReset}}">
+      <core-icon icon="clear"></core-icon>
+      reset game
+    </paper-button>
+
+    <template repeat="{{key in keys}}">
+      <ul>
+        <li>{{key}}: {{data[key]}}</li>
+      </ul>
+    </template>
+
+  </template>
+  <script>
+    (function () {
+      Polymer({
+        url : "https://ss15-rhythm.firebaseio.com/",
+        game_id : "myGame1",
+        gameTitle : "Default Game Title",
+        comment : "abc",
+
+        // polymer events
+        ready : function () {
+          this.globals.firebase = this.url + this.game_id;
+        },
+
+        // Methods
+        resetGame : function () {
+          this.data = {
+            turn : 0,
+            points : {
+              p1 : 0,
+              p2 : 0
+            },
+            comment : ""
+          }
+        },
+        setNextTurn : function () {
+          var turn = this.data.turn;
+          this.data.turn = turn+1;
+        },
+        /*
+        // Doesn't work editing child values directly
+        
+        addPoint : function (player) {
+          var points = this.data.points['p'+player];
+          console.log(player, points);
+          this.data.points['p'+player] = points + 1;
+        },*/
+
+        // This works, but needs to handle any number of players
+        addPoint : function (player) {
+          var points = this.data.points
+              p1val = points.p1,
+              p2val = points.p2;
+
+          if (player === 1) {
+            p1val++;
+          }
+          if (player === 2) {
+            p2val++;
+          }
+          this.data.points = {
+            p1 : p1val,
+            p2 : p2val
+          };
+        },
+
+        // Observers
+        titleChanged : function (oldValue, newValue) {
+          this.data.gameTitle = newValue;
+        },
+        commentChanged : function (oldValue, newValue) {
+          this.data.comment = newValue;
+        },
+
+        childUpdated : function () {
+
+        },
+
+
+        // UI Binding
+        buttonNextTurn : function () {
+          this.setNextTurn();
+        },
+
+        buttonP1addPoint : function () {
+          var player = 1;
+          this.addPoint(player);
+        },
+
+        buttonP2addPoint : function () {
+          var player = 2;
+          this.addPoint(player);
+        },
+
+        buttonReset : function () {
+          this.resetGame();
+        }
+
+      });
+    })();
+  </script>
+</polymer-element>
