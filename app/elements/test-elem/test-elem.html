@@ -116,11 +116,9 @@
         commentChanged : function (oldValue, newValue) {
           this.data.comment = newValue;
         },
-
-        childUpdated : function () {
-
+        childUpdated : function (event) {
+          console.log('updated ', event.detail.name, ':', event.detail.value);
         },
-
 
         // UI Binding
         buttonNextTurn : function () {
