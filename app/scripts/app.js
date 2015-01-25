@@ -1,3 +1,5 @@
+var app = {};
+
 (function (document) {
   'use strict';
 
