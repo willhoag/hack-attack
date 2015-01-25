@@ -1,14 +1,24 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-router/app-router.html">
 <link rel="import" href="../../elements/hack-header/hack-header.html">
 <link rel="import" href="../../elements/hack-table/hack-table.html">
 
 <polymer-element name="hack-app" attributes="">
   <template>
     <link rel="stylesheet" href="hack-app.css">
-    <div>
-      <hack-header></hack-header>
-      <hack-table></hack-table>
-    </div>
+
+    <app-router>
+      <!-- matches using a path variable -->
+      <app-route path="/:game_id">
+        <template>
+          <div>
+            <hack-header game_id="{{game_id}}"></hack-header>
+            <hack-table game_id="{{game_id}}"></hack-table>
+          </div>
+        </template>
+      </app-route>
+    </app-router>
+
   </template>
   <script>
     (function () {

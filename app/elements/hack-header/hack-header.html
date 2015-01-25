@@ -3,14 +3,14 @@
 <link rel="import" href="../../elements/hack-scoreboard/hack-scoreboard.html">
 <link rel="import" href="../../elements/hack-statusbar/hack-statusbar.html">
 
-<polymer-element name="hack-header" attributes="">
+<polymer-element name="hack-header" attributes="game_id">
   <template>
     <link rel="stylesheet" href="hack-header.css">
     <header horizontal layout>
       <div id="logo"></div>
       <div>
         <h1>Hack Attack <paper-icon-button icon="link"></paper-icon-button></h1>
-        <p>Get the data, before they get you.</p>
+        <p>Get the data, before they get you. ({{game_id}})</p>
       </div>
       <hack-scoreboard
         turn="{{turn}}"
