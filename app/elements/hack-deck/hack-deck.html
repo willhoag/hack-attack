@@ -5,22 +5,24 @@
   <template>
     <link rel="stylesheet" href="hack-deck.css">
     <div id="container">
-      <hack-card-admin title="hi there" msg="this is my message. I wanted to make a long one just to see how well it worked."></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-    </div>
+      <template repeat={{card in cards}}>
+        <hack-card-admin title="{{card.title}}" msg="{{card.description}}"></hack-card-admin>
+      </template>
+  </div>
   </template>
   <script>
-    (function () {
+    (function (app) {
+      'use strict';
       Polymer({
-        // define element prototype here
+        ready: function () {
+          var that = this;
+          app.game.started.then(function(game){
+            that.cards = game.adminDeck.cards
+            console.log('started');
+          });
+        },
+        cards: []
       });
-    })();
+    })(app);
   </script>
 </polymer-element>
