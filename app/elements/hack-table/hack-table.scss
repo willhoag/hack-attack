@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  background: red;
+  position: absolute;
+  top:150px;
+  left: 0;
+  right : 0;
+  bottom : 0;
+  background-image : url('/images/wood-table-texture.jpg');
+  background-size: cover;
+  background-position: 50% 0;
+}
+
+#opponent_computer_deck_row {
+    // background: rgba(0, 0, 255, 0.1);
+    height: 40px;
+}
+
+#server_deck_row {
+    //background: rgba(255, 255, 255, 0.1);
+    height: 40px;
+}
+
+#computer_deck_row {
+    // background: rgba(0, 128, 0, 0.1);
+    height: 40px;
+}
