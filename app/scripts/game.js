@@ -1,8 +1,9 @@
 (function(exports, R) {
   'use strict';
 
-  function Game(playerArray) {
+  function Game(playerArray, constructor) {
     this.players = playerArray;
+    this.constructor
   }
 
   Game.prototype.addPlayer = function (player) {
@@ -12,6 +13,7 @@
   Game.prototype.start = function (callback) {
     this.startTime = new Date();
     if (callback) { callback(); }
+    this.constructor.apply(this);
   };
 
   Game.prototype.getTimeElapsed = function () {

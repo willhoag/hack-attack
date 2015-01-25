@@ -37,7 +37,7 @@
   };
 
   Deck.prototype.draw = function (numberOfCards) {
-    return this.cards.splice(-1, (numberOfCards || 1));
+    return this.cards.splice(-parseInt(numberOfCards), parseInt(numberOfCards) || 1);
   };
 
   exports.Deck = Deck;

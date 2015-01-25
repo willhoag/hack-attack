@@ -1,4 +1,6 @@
-var app = {};
+var app = {
+  utils: {}
+};
 
 (function (document) {
   'use strict';
