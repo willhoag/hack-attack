@@ -46,13 +46,22 @@
         on-tap="{{startGame}}">
         Start Game
       </paper-button>
+      <paper-button raised flex
+        hidden?="{{started}}"
+        on-tap="{{joinGame}}">
+        Join Game
+      </paper-button>
      </div>
     </div>
 
   </template>
   <script>
-    (function (app) {
+    (function (app, RSVP) {
       Polymer({
+        url : "https://ss15-rhythm.firebaseio.com/",
+        game_id : "defaultGame",
+        player_id: "",
+        userAuth: null,
         started: false,
         game: {},
         turns: {},
@@ -62,10 +71,12 @@
         turnIndex : 0,
         stageIndex: 0,
         message: '',
+
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
           console.log(this.globals.firebase);
         },
+
         startGame: function() {
           app.game.start();
           this.started = true;
@@ -73,6 +84,14 @@
           this.turns = this.game.turns;
           this.update();
         },
+
+        joinGame: function () {
+          this.getUserId().then(function(uid) {
+            app.game.addPlayer(new app.Player(uid));
+            this.setPlayers(app.game.players);
+          });
+        },
+
         update: function () {
           this.turn = this.turns.getCurrent();
           this.stage = this.turn.getCurrentStage();
@@ -81,10 +100,12 @@
           this.stageIndex = this.turn.index;
           this.message = this.stage.description;
         },
+
         nextTurn: function () {
           this.turns.nextTurn();
           this.update();
         },
+
         nextStage: function () {
           this.turn.nextStage();
           if (this.stage) {
@@ -93,24 +114,40 @@
             this.nextTurn();
           }
         },
+
         doStageAction: function () {
           this.stage.action();
         },
 
-        url : "https://ss15-rhythm.firebaseio.com/",
-        game_id : "defaultGame",
-        player_id: "",
-
-        getUserData : function () {
-          var ref = this.fbRef;
-          console.log(ref);
-          ref.authAnonymously(function(error, authData) {
-            if (error) {
-              console.log("Login Failed!", error);
+        getUserId: function () {
+          var that = this;
+          return new RSVP.Promise(function(resolve, reject) {
+            if (!that.userAuth) {
+              that.updateUserAuth.then(function(userAuth){
+                resolve(userAuth.uid);
+              }, function(error) {
+                reject(error);
+                console.log(error);
+              });
             } else {
-              console.log("Authenticated successfully with payload:", authData);
-              this.player_id = authData.uid;
+              that.resolve(that.userAuth.uid);
             }
+          });
+        },
+
+        updateUserAuth: function (callback) {
+          var that = this;
+          return new RSVP.Promise(function(resolve, reject) {
+            that.fbRef.authAnonymously(function(error, authData) {
+              if (error) {
+                reject(error);
+                console.log("Login Failed!", error);
+              } else {
+                that.userAuth = authData;
+                resolve(authData);
+                console.log("Authenticated successfully with payload:", authData);
+              }
+            });
           });
         },
 
@@ -119,24 +156,26 @@
           this.data = {
             turn : 0,
             stage : 0,
-            players : {
-              p1 : 0,
-              p2 : 0
-            }
+            players : []
           }
         },
 
-        setTurn : function (turn) {
+        setTurn: function (turn) {
           if (!this.data) this.resetGame();
           this.data.turn = turn || 0;
         },
 
-        setStage : function (stage) {
+        setPlayers: function (players) {
+          if (!this.data) this.resetGame();
+          this.data.players = players || [];
+        },
+
+        setStage: function (stage) {
           if (!this.data) this.resetGame();
           this.data.stage = stage || 0;
         },
 
       });
-    })(app);
+    })(app, RSVP);
   </script>
 </polymer-element>
