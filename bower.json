@@ -7,7 +7,8 @@
     "polymer": "Polymer/polymer#^0.5.1",
     "webcomponentsjs": "~0.5.4",
     "firebase-element": "git@github.com:Polymer/firebase-element.git#~0.5.4",
-    "pvc-globals": "~0.1.0"
+    "pvc-globals": "~0.1.0",
+    "app-router": "~2.3.2"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^2.0.0"
