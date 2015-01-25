@@ -1,12 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../elements/hack-scoreboard/hack-scoreboard.html">
+<link rel="import" href="../../elements/hack-statusbar/hack-statusbar.html">
 
 <polymer-element name="hack-header" attributes="">
   <template>
     <link rel="stylesheet" href="hack-header.css">
     <header horizontal layout>
       <div>
-        <h1>Hack Attack</h1>
+        <h1>Hack Attack <paper-icon-button icon="link"></paper-icon-button></h1>
         <p>Get the data, before they get you.</p>
       </div>
       <hack-scoreboard
@@ -15,13 +17,15 @@
         player2_score="{{player2_score}}">
       </hack-scoreboard>
     </header>
+    <hack-statusbar message="{{message}}"></hack-statusbar>
   </template>
   <script>
     (function () {
       Polymer({
         turn : 0,
         player1_score : 4,
-        player2_score : 0
+        player2_score : 0,
+        message : "Player 2 was just hacked!"
       });
     })();
   </script>
