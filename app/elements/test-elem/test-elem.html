@@ -21,12 +21,19 @@
     </firebase-element>
     <pvc-globals values="{{globals}}"></pvc-globals>
     <header>
-      <h1>{{mainTitle}}</h1>
-      <p>{{comment}}</p>
+      <h1>{{data['mainTitle']}}</h1>
+      <p>{{data['comment']}}</p>
       <paper-icon-button id="btn_editSettings" icon="settings" on-tap="{{buttonNextTurn}}"></paper-icon-button>
+      <div horizontal layout>
+        <div class="player_stats" flex>Player 1: {{data['points']['p1']}}</div>
+        <div class="player_stats"  flex>Player 2: {{data['points']['p2']}}</div>
+      </div>
+      <div horizontal layout>
+        <div flex>Current turn: {{data['turn']}}</div>
+      </div>
     </header>
-    <paper-input label="mainTitle" value="{{mainTitle}}"></paper-input>
-    <paper-input label="comment" value="{{comment}}"></paper-input>
+    <paper-input label="mainTitle" value="{{data['mainTitle']}}"></paper-input>
+    <paper-input label="comment" value="{{data['comment']}}"></paper-input>
     <paper-button raised
       on-tap="{{buttonNextTurn}}">
       <core-icon icon="arrow-forward"></core-icon>
@@ -59,7 +66,7 @@
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "myGame1",
         mainTitle : "Default Game Title",
-        comment : "abc",
+        comment : "a default comment",
 
         // polymer events
         ready : function () {
@@ -70,7 +77,7 @@
         resetGame : function () {
           this.data = {
             mainTitle : "Default Game Title",
-            comment : "",
+            comment : "a default comment",
             turn : 0,
             points : {
               p1 : 0,

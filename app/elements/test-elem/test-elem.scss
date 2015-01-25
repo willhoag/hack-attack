@@ -2,10 +2,6 @@
   display: block;
 }
 
-div {
-    background : red;
-}
-
 input {
     border : 1px solid #aaa;
 }
@@ -27,3 +23,8 @@ header {
     color: #fff;
 }
 
+.player_stats {
+    padding: 5px;
+    margin: 5px;
+    background : #777;
+}
