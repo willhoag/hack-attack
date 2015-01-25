@@ -3,9 +3,10 @@
 
   function Turns(players, Turn) {
     this.players = players;
+    this.Turn = Turn;
     this.index = 0;
     this.currentTurn = null;
-    this.Turn = Turn;
+    this.nextTurn();
   }
 
   Turns.prototype.nextTurn = function () {

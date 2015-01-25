@@ -4,6 +4,7 @@
 <link rel="import" href="../../elements/hack-statusbar/hack-statusbar.html">
 
 <polymer-element name="hack-header" attributes="">
+
   <template>
     <link rel="stylesheet" href="hack-header.css">
     <header horizontal layout>
@@ -12,31 +13,70 @@
         <h1>Hack Attack <paper-icon-button icon="link"></paper-icon-button></h1>
         <p>Get the data, before they get you.</p>
       </div>
-      <template if="{{!started}}">
-        <paper-button on-tap="{{startGame}}">Start</paper-button>
-      </template>
+      <paper-button hidden?="{{started}}" on-tap="{{startGame}}">Start</paper-button>
+      <div hidden?="{{!started}}">
+        <paper-button on-tap="{{nextStage}}">Next Stage</paper-button>
+        <input id="cardInput" type="number" hidden?="{{!stageIndex === 0}}">
+      </div>
       <hack-scoreboard
-        turn="{{turn}}"
-        player1_score="{{player1_score}}"
-        player2_score="{{player2_score}}">
+        hidden?="{{!started}}"
+        turn="{{turns.index}}"
+        player1_score="{{player1Score}}"
+        player2_score="{{player2Score}}">
       </hack-scoreboard>
     </header>
     <hack-statusbar message="{{message}}"></hack-statusbar>
   </template>
+
   <script>
     (function (app) {
       'use strict';
+
       Polymer({
         started: false,
+        game: {},
+        turns: {},
+        turn: {},
+        stage: {},
+        currentPlayer: {},
+        turnIndex : 0,
+        stageIndex: 0,
+        player1Score: 4,
+        player2Score: 0,
+        message: '',
         startGame: function() {
           app.game.start();
           this.started = true;
+          this.game = app.game;
+          this.turns = this.game.turns;
+          this.update();
         },
-        turn : 0,
-        player1_score : 4,
-        player2_score : 0,
-        message : 'Player 2 was just hacked!'
+        update: function () {
+          this.turn = this.turns.getCurrent();
+          this.stage = this.turn.getCurrentStage();
+          this.currentPlayer = this.turn.player;
+          this.turnIndex = this.turns.index;
+          this.stageIndex = this.turn.index;
+          this.message = this.stage.description;
+        },
+        nextTurn: function () {
+          this.turns.nextTurn();
+          this.update();
+        },
+        nextStage: function () {
+          this.turn.nextStage();
+          if (this.stage) {
+            this.update();
+          } else {
+            this.nextTurn();
+          }
+        },
+        doStageAction: function () {
+          this.stage.action();
+        },
       });
+
     })(app);
   </script>
+
 </polymer-element>

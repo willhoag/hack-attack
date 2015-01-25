@@ -26,9 +26,8 @@
     return R.maxBy(R.prop(scoreByProp), this.players);
   };
 
-  Game.prototype.end = function (callback) {
+  Game.prototype.end = function () {
     this.endTime = new Date();
-    if (callback) { callback(); }
   };
 
   exports.Game = Game;
