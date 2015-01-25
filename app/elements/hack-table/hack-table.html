@@ -8,15 +8,6 @@
  -->      <div id="server_deck_row" flex three>
         <div horizontal around-justified layout>
           <hack-deck cards="{{cards}}"></hack-deck>
-          <hack-deck></hack-deck>
-          <hack-deck></hack-deck>
-        </div>
-      </div>
-      <div id="computer_deck_row" flex three>
-        <div horizontal around-justified layout>
-          <hack-deck></hack-deck>
-          <hack-deck></hack-deck>
-          <hack-deck></hack-deck>
         </div>
       </div>
     </div>
@@ -28,7 +19,6 @@
           var that = this;
           app.game.started.then(function(game){
             that.cards = game.adminDeck.cards
-            console.log('started');
           });
         }
       });

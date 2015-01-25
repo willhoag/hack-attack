@@ -11,7 +11,7 @@
 
   var networking = {
       title: 'Networking',
-      description: 'On a player\'s turn, they must wire their computers to attack the servers. Player uses computer cards to choose their attacks on the available servers. Limit of 3 connections per server.',
+      description: 'Choose up to 3 connections to attack server.',
       finish: function (numberOfCards) {
          return clamp(1, 3, numberOfCards);
       }
