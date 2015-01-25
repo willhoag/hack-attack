@@ -1,15 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<polymer-element name="hack-card-admin" attributes="">
+<polymer-element name="hack-card-admin" attributes="title msg">
   <template>
     <link rel="stylesheet" href="hack-card-admin.css">
     <div id="front">
       <div id="imgFront"></div>
+      <div id="data">
+        <h2 id="title">{{title}}</h2>
+        <p id="message">{{msg}}</p>
+      </div>
     </div>
     <div id="back">
       <div id="imgBack"></div>
-      <div id="title"></div>
-      <div id="message"></div>
     </div>
   </template>
   <script>
