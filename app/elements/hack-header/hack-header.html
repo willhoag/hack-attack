@@ -12,6 +12,9 @@
         <h1>Hack Attack <paper-icon-button icon="link"></paper-icon-button></h1>
         <p>Get the data, before they get you.</p>
       </div>
+      <template if="{{!started}}">
+        <paper-button on-tap="{{startGame}}">Start</paper-button>
+      </template>
       <hack-scoreboard
         turn="{{turn}}"
         player1_score="{{player1_score}}"
@@ -24,6 +27,11 @@
     (function (app) {
       'use strict';
       Polymer({
+        started: false,
+        startGame: function() {
+          app.game.start();
+          this.started = true;
+        },
         turn : 0,
         player1_score : 4,
         player2_score : 0,
