@@ -1,14 +1,14 @@
 (function (document, app) {
   'use strict';
 
-  function gameConstructor() {
+  function startConstructor() {
     this.adminDeck = new app.Deck(app.adminCards);
     this.turns = new app.Turns(this.players, new app.turnFactory(app.stages));
     this.passcode = new app.Passcode(3);
     this.adminDeck.shuffle();
   }
 
-  app.game = new app.Game([], gameConstructor);
+  app.game = new app.Game([], startConstructor);
 
   // Using the game
   // game.start();

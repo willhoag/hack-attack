@@ -1,19 +1,21 @@
-(function(exports, R) {
+(function(exports, R, RSVP) {
   'use strict';
 
-  function Game(playerArray, constructor) {
+  function Game(playerArray, startConstructor) {
     this.players = playerArray || [];
-    this.constructor = constructor;
+    this.startConstructor = startConstructor;
+    this._deferred = RSVP.defer();
+    this.started = this._deferred.promise;
   }
 
   Game.prototype.addPlayer = function (player) {
     this.players.push(player);
   };
 
-  Game.prototype.start = function (callback) {
+  Game.prototype.start = function () {
     this.startTime = new Date();
-    if (callback) { callback(); }
-    this.constructor.apply(this);
+    this.startConstructor.apply(this);
+    this._deferred.resolve(this);
   };
 
   Game.prototype.getTimeElapsed = function () {
@@ -24,10 +26,9 @@
     return R.maxBy(R.prop(scoreByProp), this.players);
   };
 
-  Game.prototype.end = function (callback) {
+  Game.prototype.end = function () {
     this.endTime = new Date();
-    if (callback) { callback(); }
   };
 
   exports.Game = Game;
-}(app, R));
+}(app, R, RSVP));

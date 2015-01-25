@@ -1,31 +1,26 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../elements/hack-card-admin/hack-card-admin.html">
 
-<polymer-element name="hack-deck" attributes="">
+<polymer-element name="hack-deck" attributes="cards">
   <template>
     <link rel="stylesheet" href="hack-deck.css">
     <div id="container">
-      <hack-card-admin
-        cardTitle="hi there"
-        msg="this is my message. I wanted to make a long one just to see how well it worked."
-        points="2"
-        imgFront="/images/card_a.png">
-      </hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
-      <hack-card-admin></hack-card-admin>
+      <template repeat="{{card in cards}}">
+        <hack-card-admin imgFront="/images/{{card.card}}.png" points="{{card.settings.points}}" title="{{card.title}}" msg="{{card.description}}"></hack-card-admin>
+      </template>
     </div>
   </template>
   <script>
-    (function () {
+    (function (app) {
+      'use strict';
       Polymer({
-        // define element prototype here
+        ready : function () {
+          console.log(this.cards);
+        },
+        cardsChanged : function () {
+          console.log('cards changed', this.cards);
+        }
       });
-    })();
+    })(app);
   </script>
 </polymer-element>
