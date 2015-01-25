@@ -24,34 +24,36 @@
       <h1>{{data['mainTitle']}}</h1>
       <p>{{data['comment']}}</p>
       <paper-icon-button id="btn_editSettings" icon="settings" on-tap="{{buttonNextTurn}}"></paper-icon-button>
+      <paper-icon-button id="btn_getGameUrl" icon="link" on-tap="{{buttonGetUrl}}"></paper-icon-button>
       <div horizontal layout>
-        <div class="player_stats" flex>Player 1: {{data['points']['p1']}}</div>
+        <div class="player_stats" flex>
+          Player 1: {{data['points']['p1']}}</div>
         <div class="player_stats"  flex>Player 2: {{data['points']['p2']}}</div>
       </div>
       <div horizontal layout>
         <div flex>Current turn: {{data['turn']}}</div>
       </div>
     </header>
-    <paper-input label="mainTitle" value="{{data['mainTitle']}}"></paper-input>
-    <paper-input label="comment" value="{{data['comment']}}"></paper-input>
-    <paper-button raised
-      on-tap="{{buttonNextTurn}}">
-      <core-icon icon="arrow-forward"></core-icon>
-      next turn
-    </paper-button>
-    <paper-button raised
-      on-tap="{{buttonP1addPoint}}">
-      <core-icon icon="add-circle"></core-icon> Player1: Add Point
-    </paper-button>
-    <paper-button raised
-      on-tap="{{buttonP2addPoint}}">
-      <core-icon icon="add-circle"></core-icon> Player2: Add Point
-    </paper-button>
-    <paper-button raised
-      on-tap="{{buttonReset}}">
-      <core-icon icon="clear"></core-icon>
-      reset game
-    </paper-button>
+    <div horizontal layout>
+      <paper-button raised  flex
+        on-tap="{{buttonNextTurn}}">
+        <core-icon icon="arrow-forward"></core-icon>
+        next turn
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonP1addPoint}}">
+        <core-icon icon="add-circle"></core-icon> Player1: Add Point
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonP2addPoint}}">
+        <core-icon icon="add-circle"></core-icon> Player2: Add Point
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonReset}}">
+        <core-icon icon="clear"></core-icon>
+        reset game
+      </paper-button>
+    </div>
 
     <template repeat="{{key in keys}}">
       <ul>
@@ -65,12 +67,11 @@
       Polymer({
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "myGame1",
-        mainTitle : "Default Game Title",
-        comment : "a default comment",
 
         // polymer events
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
+          console.log(this.globals.firebase);
         },
 
         // Methods
@@ -116,16 +117,10 @@
           };
         },
 
-        // Observers
-        mainTitleChanged : function (oldValue, newValue) {
-          this.data.mainTitle = newValue;
-        },
-        commentChanged : function (oldValue, newValue) {
-          this.data.comment = newValue;
-        },
-        childUpdated : function (event) {
-          console.log('updated ', event.detail.name, ':', event.detail.value);
-        },
+        // // Firebase Observers
+        // childUpdated : function (event) {
+        //   console.log('updated ', event.detail.name, ':', event.detail.value);
+        // },
 
         // UI Binding
         buttonNextTurn : function () {
