@@ -28,52 +28,78 @@
     <pvc-globals values="{{globals}}"></pvc-globals>
 
     <div>
-      <hack-header game_id="{{game_id}}" player_id="{{player_id}}"></hack-header>
+      <hack-header game_id="{{game_id}}" player_id="{{player_id}}" game={{game}}></hack-header>
       <hack-table game_id="{{game_id}}" player_id="{{player_id}}"></hack-table>
     </div>
-  
+
     <!-- TEMPORARY FOR TESTING -->
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
      <div horizontal layout>
-      <paper-button raised  flex
-        on-tap="{{buttonNextTurn}}">
+      <paper-button raised flex
+        hidden?="{{!started}}"
+        on-tap="{{nextStage}}">
         <core-icon icon="arrow-forward"></core-icon>
-        Next Turn
+        Next Step
       </paper-button>
       <paper-button raised flex
-        on-tap="{{buttonP1addPoint}}">
-        <core-icon icon="add-circle"></core-icon> Player1: Add Point
-      </paper-button>
-      <paper-button raised flex
-        on-tap="{{buttonP2addPoint}}">
-        <core-icon icon="add-circle"></core-icon> Player2: Add Point
-      </paper-button>
-      <paper-button raised flex
-        on-tap="{{buttonGetuser}}">
-        <core-icon icon="user"></core-icon>
-        Get User
-      </paper-button>
-      <paper-button raised flex
-        on-tap="{{buttonReset}}">
-        <core-icon icon="clear"></core-icon>
-        Reset Game
+        hidden?="{{started}}"
+        on-tap="{{startGame}}">
+        Start Game
       </paper-button>
      </div>
     </div>
 
   </template>
   <script>
-    (function () {
+    (function (app) {
       Polymer({
-        url : "https://ss15-rhythm.firebaseio.com/",
-        game_id : "defaultGame",
-        player_id: "",
-
-        // polymer events
+        started: false,
+        game: {},
+        turns: {},
+        turn: {},
+        stage: {},
+        currentPlayer: {},
+        turnIndex : 0,
+        stageIndex: 0,
+        message: '',
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
           console.log(this.globals.firebase);
         },
+        startGame: function() {
+          app.game.start();
+          this.started = true;
+          this.game = app.game;
+          this.turns = this.game.turns;
+          this.update();
+        },
+        update: function () {
+          this.turn = this.turns.getCurrent();
+          this.stage = this.turn.getCurrentStage();
+          this.currentPlayer = this.turn.player;
+          this.turnIndex = this.turns.index;
+          this.stageIndex = this.turn.index;
+          this.message = this.stage.description;
+        },
+        nextTurn: function () {
+          this.turns.nextTurn();
+          this.update();
+        },
+        nextStage: function () {
+          this.turn.nextStage();
+          if (this.stage) {
+            this.update();
+          } else {
+            this.nextTurn();
+          }
+        },
+        doStageAction: function () {
+          this.stage.action();
+        },
+
+        url : "https://ss15-rhythm.firebaseio.com/",
+        game_id : "defaultGame",
+        player_id: "",
 
         getUserData : function () {
           var ref = this.fbRef;
@@ -86,10 +112,6 @@
               this.player_id = authData.uid;
             }
           });
-        },
-
-        game_idChanged : function () {
-          console.log('game_idChanged');
         },
 
         // Methods
@@ -114,46 +136,7 @@
           this.data.stage = stage || 0;
         },
 
-        // This works, but needs to handle any number of players
-        addPoint : function (player_id, point) {
-          var players = this.data.players
-              p1val = players.p1,
-              p2val = players.p2;
-          if (player === 1) {
-            p1val++;
-          }
-          if (player === 2) {
-            p2val++;
-          }
-          this.data.players = {
-            p1 : p1val,
-            p2 : p2val
-          };
-        },
-        // // Firebase Observers
-        // childUpdated : function (event) {
-        //   console.log('updated ', event.detail.name, ':', event.detail.value);
-        // },
-
-        // UI Binding
-        buttonNextTurn : function () {
-          this.setTurn(this.data.turn+1);
-        },
-        buttonP1addPoint : function () {
-          var player = 1;
-          this.addPoint(player);
-        },
-        buttonP2addPoint : function () {
-          var player = 2;
-          this.addPoint(player);
-        },
-        buttonReset : function () {
-          this.resetGame();
-        },
-        buttonGetuser : function () {
-          this.getUserData();
-        }
       });
-    })();
+    })(app);
   </script>
 </polymer-element>
