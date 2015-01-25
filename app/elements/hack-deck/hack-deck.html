@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="hack-deck.css">
     <div id="container">
       <template repeat="{{card in cards}}">
-        <hack-card-admin imgFront="/images/{{card.card}}.png" points="{{card.settings.points}}" title="{{card.title}}" msg="{{card.description}}"></hack-card-admin>
+        <hack-card-admin imgFront="/images/card_{{card.card}}.png" points="{{card.settings.points}}" title="{{card.title}}" msg="{{card.description}}"></hack-card-admin>
       </template>
     </div>
   </template>
