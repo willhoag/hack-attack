@@ -5,7 +5,9 @@
     "core-elements": "Polymer/core-elements#^0.5.1",
     "paper-elements": "Polymer/paper-elements#^0.5.1",
     "polymer": "Polymer/polymer#^0.5.1",
-    "webcomponentsjs": "~0.5.4"
+    "webcomponentsjs": "~0.5.4",
+    "firebase-element": "git@github.com:Polymer/firebase-element.git#~0.5.4",
+    "pvc-globals": "~0.1.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^2.0.0"
