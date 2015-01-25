@@ -3,9 +3,15 @@
 <polymer-element name="hack-scoreboard" attributes="turn player1_score player2_score">
   <template>
     <link rel="stylesheet" href="hack-scoreboard.css">
-    <div id="container">
-      <div>player 1: <span class="score_value">{{player1_score}}</span></div>
-      <div>player 2: <span class="score_value">{{player2_score}}</span></div>
+    <div horizontal layout id="container">
+      <div class="cell">
+        <div class="score_value">{{player1_score}}</div>
+        <div class="label">player 1</div>
+      </div>
+      <div class="cell">
+        <div class="score_value">{{player2_score}}</div>
+        <div class="label">player 2</div>
+      </div>
     </div>
   </template>
   <script>
