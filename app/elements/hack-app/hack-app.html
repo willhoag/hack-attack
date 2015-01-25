@@ -20,6 +20,7 @@
       location="{{globals.firebase}}"
       data="{{data}}"
       keys="{{keys}}"
+      ref="{{fbRef}}"
       childEvents
       on-child-changed={{childUpdated}}
       >
@@ -30,27 +31,35 @@
       <hack-header game_id="{{game_id}}"></hack-header>
       <hack-table game_id="{{game_id}}"></hack-table>
     </div>
-
-   <div horizontal layout>
-    <paper-button raised  flex
-      on-tap="{{buttonNextTurn}}">
-      <core-icon icon="arrow-forward"></core-icon>
-      next turn
-    </paper-button>
-    <paper-button raised flex
-      on-tap="{{buttonP1addPoint}}">
-      <core-icon icon="add-circle"></core-icon> Player1: Add Point
-    </paper-button>
-    <paper-button raised flex
-      on-tap="{{buttonP2addPoint}}">
-      <core-icon icon="add-circle"></core-icon> Player2: Add Point
-    </paper-button>
-    <paper-button raised flex
-      on-tap="{{buttonReset}}">
-      <core-icon icon="clear"></core-icon>
-      reset game
-    </paper-button>
-  </div>
+  
+    <!-- TEMPORARY FOR TESTING -->
+    <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
+     <div horizontal layout>
+      <paper-button raised  flex
+        on-tap="{{buttonNextTurn}}">
+        <core-icon icon="arrow-forward"></core-icon>
+        Next Turn
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonP1addPoint}}">
+        <core-icon icon="add-circle"></core-icon> Player1: Add Point
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonP2addPoint}}">
+        <core-icon icon="add-circle"></core-icon> Player2: Add Point
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonGetuser}}">
+        <core-icon icon="user"></core-icon>
+        Get User
+      </paper-button>
+      <paper-button raised flex
+        on-tap="{{buttonReset}}">
+        <core-icon icon="clear"></core-icon>
+        Reset Game
+      </paper-button>
+     </div>
+    </div>
 
   </template>
   <script>
@@ -58,10 +67,25 @@
       Polymer({
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "defaultGame",
+        player_id: "",
+
         // polymer events
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
           console.log(this.globals.firebase);
+        },
+
+        getUserData : function () {
+          var ref = this.fbRef;
+          console.log(ref);
+          ref.authAnonymously(function(error, authData) {
+            if (error) {
+              console.log("Login Failed!", error);
+            } else {
+              console.log("Authenticated successfully with payload:", authData);
+              this.player_id = authData.uid;
+            }
+          });
         },
 
         game_idChanged : function () {
@@ -125,7 +149,12 @@
         },
         buttonReset : function () {
           this.resetGame();
+        },
+
+        buttonGetuser : function () {
+          this.getUserData();
         }
+
       });
     })();
   </script>
