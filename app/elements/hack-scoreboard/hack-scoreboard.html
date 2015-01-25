@@ -4,11 +4,11 @@
   <template>
     <link rel="stylesheet" href="hack-scoreboard.css">
     <div horizontal layout id="container">
-      <div class="cell">
+      <div class="cell {{ {active: activePlayer == 0} | tokenList}}">
         <div class="score_value">{{player1_score}}</div>
         <div class="label">player 1</div>
       </div>
-      <div class="cell">
+      <div class="cell {{ {active: activePlayer == 1} | tokenList}}">
         <div class="score_value">{{player2_score}}</div>
         <div class="label">player 2</div>
       </div>
@@ -17,7 +17,13 @@
   <script>
     (function () {
       Polymer({
-        // define element prototype here
+        activePlayer : 0,
+
+        turnChanged : function () {
+          var isEven = (this.turn % 2 == 0)
+          if (isEven) this.activePlayer = 0;
+          else this.activePlayer = 1;
+        }
       });
     })();
   </script>

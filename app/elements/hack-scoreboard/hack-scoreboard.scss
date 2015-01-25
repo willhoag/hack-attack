@@ -12,6 +12,12 @@
 .cell {
     padding: 20px;
     text-align: center;
+    border: 1px solid transparent;
+    border-radius: 6px;
+}
+
+.cell.active {
+    border: 1px solid #fff;
 }
 
 .label {

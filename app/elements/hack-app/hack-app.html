@@ -153,6 +153,8 @@
 
         // Methods
         resetGame : function () {
+          var confirm = window.confirm("Are you sure you want to start a new game?");
+          if (!confirm) return;
           this.data = {
             turn : 0,
             stage : 0,
