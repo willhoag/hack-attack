@@ -28,8 +28,8 @@
     <pvc-globals values="{{globals}}"></pvc-globals>
 
     <div>
-      <hack-header game_id="{{game_id}}"></hack-header>
-      <hack-table game_id="{{game_id}}"></hack-table>
+      <hack-header game_id="{{game_id}}" player_id="{{player_id}}"></hack-header>
+      <hack-table game_id="{{game_id}}" player_id="{{player_id}}"></hack-table>
     </div>
   
     <!-- TEMPORARY FOR TESTING -->
@@ -97,36 +97,35 @@
           this.data = {
             turn : 0,
             stage : 0,
-            points : {
+            players : {
               p1 : 0,
               p2 : 0
             }
           }
         },
-        setNextTurn : function () {
-          var turn = this.data.turn;
-          this.data.turn = turn+1;
+
+        setTurn : function (turn) {
+          if (!this.data) this.resetGame();
+          this.data.turn = turn || 0;
         },
-        /*
-        // Doesn't work editing child values directly
-        
-        addPoint : function (player) {
-          var points = this.data.points['p'+player];
-          console.log(player, points);
-          this.data.points['p'+player] = points + 1;
-        },*/
+
+        setStage : function (stage) {
+          if (!this.data) this.resetGame();
+          this.data.stage = stage || 0;
+        },
+
         // This works, but needs to handle any number of players
-        addPoint : function (player) {
-          var points = this.data.points
-              p1val = points.p1,
-              p2val = points.p2;
+        addPoint : function (player_id, point) {
+          var players = this.data.players
+              p1val = players.p1,
+              p2val = players.p2;
           if (player === 1) {
             p1val++;
           }
           if (player === 2) {
             p2val++;
           }
-          this.data.points = {
+          this.data.players = {
             p1 : p1val,
             p2 : p2val
           };
@@ -135,9 +134,10 @@
         // childUpdated : function (event) {
         //   console.log('updated ', event.detail.name, ':', event.detail.value);
         // },
+
         // UI Binding
         buttonNextTurn : function () {
-          this.setNextTurn();
+          this.setTurn(this.data.turn+1);
         },
         buttonP1addPoint : function () {
           var player = 1;
@@ -150,11 +150,9 @@
         buttonReset : function () {
           this.resetGame();
         },
-
         buttonGetuser : function () {
           this.getUserData();
         }
-
       });
     })();
   </script>
