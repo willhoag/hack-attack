@@ -1,11 +1,13 @@
 (function(exports, R) {
   'use strict';
 
-  function Player(spec) {}
-
-  Player.fromFirebase = function (firebaseUser) {
-    return new Player(firebaseUser)
-  };
+  function Player(userId) {
+    this.uid = userId;
+    this.points = 0;
+    this.computers = 20;
+    this.connected = 3;
+  }
 
   exports.Player = Player;
+
 }(app, R));

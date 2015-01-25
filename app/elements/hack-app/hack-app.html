@@ -28,68 +28,127 @@
     <pvc-globals values="{{globals}}"></pvc-globals>
 
     <div>
-      <hack-header game_id="{{game_id}}" player_id="{{player_id}}"></hack-header>
+      <hack-header game_id="{{game_id}}" player_id="{{player_id}}" game={{game}}></hack-header>
       <hack-table game_id="{{game_id}}" player_id="{{player_id}}"></hack-table>
     </div>
-  
+
     <!-- TEMPORARY FOR TESTING -->
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
      <div horizontal layout>
-      <paper-button raised  flex
-        on-tap="{{buttonNextTurn}}">
+      <paper-button raised flex
+        hidden?="{{!started}}"
+        on-tap="{{nextStage}}">
         <core-icon icon="arrow-forward"></core-icon>
-        Next Turn
+        Next Step
       </paper-button>
       <paper-button raised flex
-        on-tap="{{buttonP1addPoint}}">
-        <core-icon icon="add-circle"></core-icon> Player1: Add Point
+        hidden?="{{started}}"
+        on-tap="{{startGame}}">
+        Start Game
       </paper-button>
       <paper-button raised flex
-        on-tap="{{buttonP2addPoint}}">
-        <core-icon icon="add-circle"></core-icon> Player2: Add Point
-      </paper-button>
-      <paper-button raised flex
-        on-tap="{{buttonGetuser}}">
-        <core-icon icon="user"></core-icon>
-        Get User
-      </paper-button>
-      <paper-button raised flex
-        on-tap="{{buttonReset}}">
-        <core-icon icon="clear"></core-icon>
-        Reset Game
+        hidden?="{{started}}"
+        on-tap="{{joinGame}}">
+        Join Game
       </paper-button>
      </div>
     </div>
 
   </template>
   <script>
-    (function () {
+    (function (app, RSVP) {
       Polymer({
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "defaultGame",
         player_id: "",
+        userAuth: null,
+        started: false,
+        game: {},
+        turns: {},
+        turn: {},
+        stage: {},
+        currentPlayer: {},
+        turnIndex : 0,
+        stageIndex: 0,
+        message: '',
 
-        // polymer events
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
           console.log(this.globals.firebase);
         },
 
-        getUserData : function () {
-          var ref = this.fbRef;
-          console.log(ref);
-          ref.authAnonymously(function(error, authData) {
-            if (error) {
-              console.log("Login Failed!", error);
+        startGame: function() {
+          app.game.start();
+          this.started = true;
+          this.game = app.game;
+          this.turns = this.game.turns;
+          this.update();
+        },
+
+        joinGame: function () {
+          this.getUserId().then(function(uid) {
+            app.game.addPlayer(new app.Player(uid));
+            this.setPlayers(app.game.players);
+          });
+        },
+
+        update: function () {
+          this.turn = this.turns.getCurrent();
+          this.stage = this.turn.getCurrentStage();
+          this.currentPlayer = this.turn.player;
+          this.turnIndex = this.turns.index;
+          this.stageIndex = this.turn.index;
+          this.message = this.stage.description;
+        },
+
+        nextTurn: function () {
+          this.turns.nextTurn();
+          this.update();
+        },
+
+        nextStage: function () {
+          this.turn.nextStage();
+          if (this.stage) {
+            this.update();
+          } else {
+            this.nextTurn();
+          }
+        },
+
+        doStageAction: function () {
+          this.stage.action();
+        },
+
+        getUserId: function () {
+          var that = this;
+          return new RSVP.Promise(function(resolve, reject) {
+            if (!that.userAuth) {
+              that.updateUserAuth.then(function(userAuth){
+                resolve(userAuth.uid);
+              }, function(error) {
+                reject(error);
+                console.log(error);
+              });
             } else {
-              console.log("Authenticated successfully with payload:", authData);
-              this.player_id = authData.uid;
+              that.resolve(that.userAuth.uid);
             }
           });
         },
 
-        game_idChanged : function () {
-          console.log('game_idChanged');
+        updateUserAuth: function (callback) {
+          var that = this;
+          return new RSVP.Promise(function(resolve, reject) {
+            that.fbRef.authAnonymously(function(error, authData) {
+              if (error) {
+                reject(error);
+                console.log("Login Failed!", error);
+              } else {
+                that.userAuth = authData;
+                resolve(authData);
+                console.log("Authenticated successfully with payload:", authData);
+              }
+            });
+          });
         },
 
         // Methods
@@ -99,63 +158,26 @@
           this.data = {
             turn : 0,
             stage : 0,
-            players : {
-              p1 : 0,
-              p2 : 0
-            }
+            players : []
           }
         },
 
-        setTurn : function (turn) {
+        setTurn: function (turn) {
           if (!this.data) this.resetGame();
           this.data.turn = turn || 0;
         },
 
-        setStage : function (stage) {
+        setPlayers: function (players) {
+          if (!this.data) this.resetGame();
+          this.data.players = players || [];
+        },
+
+        setStage: function (stage) {
           if (!this.data) this.resetGame();
           this.data.stage = stage || 0;
         },
 
-        // This works, but needs to handle any number of players
-        addPoint : function (player_id, point) {
-          var players = this.data.players
-              p1val = players.p1,
-              p2val = players.p2;
-          if (player === 1) {
-            p1val++;
-          }
-          if (player === 2) {
-            p2val++;
-          }
-          this.data.players = {
-            p1 : p1val,
-            p2 : p2val
-          };
-        },
-        // // Firebase Observers
-        // childUpdated : function (event) {
-        //   console.log('updated ', event.detail.name, ':', event.detail.value);
-        // },
-
-        // UI Binding
-        buttonNextTurn : function () {
-          this.setTurn(this.data.turn+1);
-        },
-        buttonP1addPoint : function () {
-          var player = 1;
-          this.addPoint(player);
-        },
-        buttonP2addPoint : function () {
-          var player = 2;
-          this.addPoint(player);
-        },
-        buttonReset : function () {
-          this.resetGame();
-        },
-        buttonGetuser : function () {
-          this.getUserData();
-        }
       });
-    })();
+    })(app, RSVP);
   </script>
 </polymer-element>

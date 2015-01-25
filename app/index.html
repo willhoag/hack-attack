@@ -7,14 +7,15 @@
     <title>temp</title>
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <script src="scripts/inits.js"></script>
-
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild-->
 
     <!-- build:js bower_components/webcomponentsjs/webcomponents.min.js -->
     <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+    <script src="bower_components/ramda/ramda.min.js"></script>
+    <script src="bower_components/rsvp/rsvp.min.js"></script>
+    <script src="scripts/inits.js"></script>
     <!-- endbuild -->
 
     <!-- build:vulcanized elements/elements.vulcanized.html -->
@@ -24,10 +25,9 @@
 
   <body unresolved fullbleed>
     <!-- build:js scripts/app.js -->
-    <script src="bower_components/ramda/ramda.min.js"></script>
-    <script src="bower_components/rsvp/rsvp.min.js"></script>
     <script src="scripts/incOrLoop.js"></script>
     <script src="scripts/passcode.js"></script>
+    <script src="scripts/player.js"></script>
     <script src="scripts/game.js"></script>
     <script src="scripts/deck.js"></script>
     <script src="scripts/turns.js"></script>
