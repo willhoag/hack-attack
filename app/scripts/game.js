@@ -2,8 +2,8 @@
   'use strict';
 
   function Game(playerArray, constructor) {
-    this.players = playerArray;
-    this.constructor
+    this.players = playerArray || [];
+    this.constructor = constructor;
   }
 
   Game.prototype.addPlayer = function (player) {

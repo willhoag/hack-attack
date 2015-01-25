@@ -20,13 +20,13 @@
     <hack-statusbar message="{{message}}"></hack-statusbar>
   </template>
   <script>
-    (function () {
+    (function (game) {
       Polymer({
         turn : 0,
         player1_score : 4,
         player2_score : 0,
         message : "Player 2 was just hacked!"
       });
-    })();
+    })(app.game);
   </script>
 </polymer-element>
