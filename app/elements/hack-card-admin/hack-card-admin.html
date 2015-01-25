@@ -1,9 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<polymer-element name="hack-card-admin" attributes="cardTitle msg points imgFront, imgBack">
+<polymer-element name="hack-card-admin" attributes="cardTitle msg points imgFront imgBack flipped">
   <template>
     <link rel="stylesheet" href="hack-card-admin.css">
-    <div id="front">
+    <div id="front" hidden?="{{!flipped}}">
       <div id="imgFront" style="background-image: url({{imgFront}});"></div>
       <div id="data">
         <h2 id="title">{{cardTitle}}</h2>
@@ -11,14 +11,17 @@
         <div id="points">{{points}}</div>
       </div>
     </div>
-    <div id="back" hidden>
+    <div id="back" hidden?="{{flipped}}">
       <div id="imgBack" style="background-image: url({{imgBack}});"></div>
     </div>
   </template>
   <script>
     (function () {
       Polymer({
-
+        flipped : false,
+        flippedChanged : function () {
+          console.log('card was flipped');
+        }
       });
     })();
   </script>
