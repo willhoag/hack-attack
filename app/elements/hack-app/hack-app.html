@@ -1,29 +1,131 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/app-router/app-router.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-element.html">
+<link rel="import" href="../../bower_components/pvc-globals/pvc-globals.html">
+
+
+<link rel="import" href="../../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+
 <link rel="import" href="../../elements/hack-header/hack-header.html">
 <link rel="import" href="../../elements/hack-table/hack-table.html">
 
-<polymer-element name="hack-app" attributes="">
+<polymer-element name="hack-app" attributes="game_id">
   <template>
     <link rel="stylesheet" href="hack-app.css">
 
-    <app-router>
-      <!-- matches using a path variable -->
-      <app-route path="/:game_id">
-        <template>
-          <div>
-            <hack-header game_id="{{game_id}}"></hack-header>
-            <hack-table game_id="{{game_id}}"></hack-table>
-          </div>
-        </template>
-      </app-route>
-    </app-router>
+    <firebase-element id="base"
+      location="{{globals.firebase}}"
+      data="{{data}}"
+      keys="{{keys}}"
+      childEvents
+      on-child-changed={{childUpdated}}
+      >
+    </firebase-element>
+    <pvc-globals values="{{globals}}"></pvc-globals>
+
+    <div>
+      <hack-header game_id="{{game_id}}"></hack-header>
+      <hack-table game_id="{{game_id}}"></hack-table>
+    </div>
+
+   <div horizontal layout>
+    <paper-button raised  flex
+      on-tap="{{buttonNextTurn}}">
+      <core-icon icon="arrow-forward"></core-icon>
+      next turn
+    </paper-button>
+    <paper-button raised flex
+      on-tap="{{buttonP1addPoint}}">
+      <core-icon icon="add-circle"></core-icon> Player1: Add Point
+    </paper-button>
+    <paper-button raised flex
+      on-tap="{{buttonP2addPoint}}">
+      <core-icon icon="add-circle"></core-icon> Player2: Add Point
+    </paper-button>
+    <paper-button raised flex
+      on-tap="{{buttonReset}}">
+      <core-icon icon="clear"></core-icon>
+      reset game
+    </paper-button>
+  </div>
 
   </template>
   <script>
     (function () {
       Polymer({
-        // define element prototype here
+        url : "https://ss15-rhythm.firebaseio.com/",
+        game_id : "defaultGame",
+        // polymer events
+        ready : function () {
+          this.globals.firebase = this.url + this.game_id;
+          console.log(this.globals.firebase);
+        },
+
+        game_idChanged : function () {
+          console.log('game_idChanged');
+        },
+
+        // Methods
+        resetGame : function () {
+          this.data = {
+            turn : 0,
+            stage : 0,
+            points : {
+              p1 : 0,
+              p2 : 0
+            }
+          }
+        },
+        setNextTurn : function () {
+          var turn = this.data.turn;
+          this.data.turn = turn+1;
+        },
+        /*
+        // Doesn't work editing child values directly
+        
+        addPoint : function (player) {
+          var points = this.data.points['p'+player];
+          console.log(player, points);
+          this.data.points['p'+player] = points + 1;
+        },*/
+        // This works, but needs to handle any number of players
+        addPoint : function (player) {
+          var points = this.data.points
+              p1val = points.p1,
+              p2val = points.p2;
+          if (player === 1) {
+            p1val++;
+          }
+          if (player === 2) {
+            p2val++;
+          }
+          this.data.points = {
+            p1 : p1val,
+            p2 : p2val
+          };
+        },
+        // // Firebase Observers
+        // childUpdated : function (event) {
+        //   console.log('updated ', event.detail.name, ':', event.detail.value);
+        // },
+        // UI Binding
+        buttonNextTurn : function () {
+          this.setNextTurn();
+        },
+        buttonP1addPoint : function () {
+          var player = 1;
+          this.addPoint(player);
+        },
+        buttonP2addPoint : function () {
+          var player = 2;
+          this.addPoint(player);
+        },
+        buttonReset : function () {
+          this.resetGame();
+        }
       });
     })();
   </script>

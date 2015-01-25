@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-router/app-router.html">
+
+<polymer-element name="hack-route" attributes="">
+  <template>
+    <link rel="stylesheet" href="hack-route.css">
+    <app-router>
+      <!-- matches using a path variable -->
+      <app-route path="/:game_id">
+        <template>
+          <hack-app game_id="{{game_id}}"></hack-app>
+        </template>
+      </app-route>
+    </app-router>
+  </template>
+  <script>
+    (function () {
+      Polymer({
+        // define element prototype here
+      });
+    })();
+  </script>
+</polymer-element>
