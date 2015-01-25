@@ -11,21 +11,30 @@
         <h1>Hack Attack <paper-icon-button icon="link"></paper-icon-button></h1>
         <p>Get the data, before they get you.</p>
       </div>
+      <div if="{{elapsedTime}}">{{elapsedTime}}</div>
       <hack-scoreboard
         turn="{{turn}}"
-        player1_score="{{player1_score}}"
-        player2_score="{{player2_score}}">
+        player1_score="{{player1Score}}"
+        player2_score="{{player2Score}}">
       </hack-scoreboard>
     </header>
     <hack-statusbar message="{{message}}"></hack-statusbar>
   </template>
   <script>
     (function (game) {
+      'use strict';
+
       Polymer({
-        turn : 0,
-        player1_score : 4,
-        player2_score : 0,
-        message : "Player 2 was just hacked!"
+        elapsedTime: 0,
+        turn: 0,
+        player1Score: 4,
+        player2Score: 0,
+        message: 'Player 2 was just hacked!',
+        ready: function () {
+          setInterval(function() {
+            this.elapsedTime = game.getTimeElapsed();
+          }.bind(this), 1000);
+        }
       });
     })(app.game);
   </script>
