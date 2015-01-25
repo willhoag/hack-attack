@@ -10,6 +10,30 @@
   overflow: hidden;
 }
 
+#imgFront {
+    position: absolute;
+    top: 0;
+    bottom : 155px;
+    left : 0;
+    right : 0;
+    bottom : 0;
+    padding: 4px;
+    background-size: contain;
+}
+
+
+#imgBack {
+    position: absolute;
+    top: 0;
+    bottom : 0;
+    left : 0;
+    right : 0;
+    bottom : 0;
+    padding: 4px;
+    background: blue;
+}
+
+
 #data {
     position: absolute;
     top : 155px;
@@ -32,4 +56,19 @@
     padding: 0;
     margin : 0;
     font-size: 8pt;
+}
+
+#points {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 9pt;
 }
