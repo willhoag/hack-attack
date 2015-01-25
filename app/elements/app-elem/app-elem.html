@@ -1,0 +1,25 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-router/app-router.html">
+<link rel="import" href="../../elements/test-elem/test-elem.html">
+
+<polymer-element name="app-elem" attributes="">
+  <template>
+    <link rel="stylesheet" href="app-elem.css">
+
+    <app-router>
+      <!-- matches using a path variable -->
+      <app-route path="/:game_id">
+        <template>
+          <test-elem vertical layout game_id="{{game_id}}"></test-elem>
+        </template
+      </app-route>
+    </app-router>
+  </template>
+  <script>
+    (function () {
+      Polymer({
+        game_id : "demo"
+      });
+    })();
+  </script>
+</polymer-element>
