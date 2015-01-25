@@ -1,27 +1,25 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../elements/hack-card-admin/hack-card-admin.html">
 
-<polymer-element name="hack-deck" attributes="">
+<polymer-element name="hack-deck" attributes="cards">
   <template>
     <link rel="stylesheet" href="hack-deck.css">
     <div id="container">
-      <template repeat={{card in cards}}>
+      <template repeat="{{card in cards}}">
         <hack-card-admin title="{{card.title}}" msg="{{card.description}}"></hack-card-admin>
       </template>
-  </div>
+    </div>
   </template>
   <script>
     (function (app) {
       'use strict';
       Polymer({
-        ready: function () {
-          var that = this;
-          app.game.started.then(function(game){
-            that.cards = game.adminDeck.cards
-            console.log('started');
-          });
+        ready : function () {
+          console.log(this.cards);
         },
-        cards: []
+        cardsChanged : function () {
+          console.log('cards changed', this.cards);
+        }
       });
     })(app);
   </script>
