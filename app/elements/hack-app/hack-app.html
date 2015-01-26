@@ -42,12 +42,12 @@
         Next Step
       </paper-button>
       <paper-button raised flex
-        hidden?="{{started}}"
+        hidden?="{{started || !joined}}"
         on-tap="{{startGame}}">
         Start Game
       </paper-button>
       <paper-button raised flex
-        hidden?="{{started}}"
+        hidden?="{{joined}}"
         on-tap="{{joinGame}}">
         Join Game
       </paper-button>
@@ -61,6 +61,7 @@
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "defaultGame",
         player_id: "",
+        joined: false,
         userAuth: null,
         started: false,
         game: {},
@@ -75,6 +76,7 @@
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
           console.log(this.globals.firebase);
+          this.resetGameData()
         },
 
         startGame: function() {
@@ -86,9 +88,11 @@
         },
 
         joinGame: function () {
+          var that = this;
           this.getUserId().then(function(uid) {
             app.game.addPlayer(new app.Player(uid));
-            this.setPlayers(app.game.players);
+            that.setPlayers(app.game.players);
+            that.joined = true;
           });
         },
 
@@ -123,7 +127,7 @@
           var that = this;
           return new RSVP.Promise(function(resolve, reject) {
             if (!that.userAuth) {
-              that.updateUserAuth.then(function(userAuth){
+              that.updateUserAuth().then(function(userAuth){
                 resolve(userAuth.uid);
               }, function(error) {
                 reject(error);
@@ -135,7 +139,7 @@
           });
         },
 
-        updateUserAuth: function (callback) {
+        updateUserAuth: function () {
           var that = this;
           return new RSVP.Promise(function(resolve, reject) {
             that.fbRef.authAnonymously(function(error, authData) {
@@ -151,10 +155,7 @@
           });
         },
 
-        // Methods
-        resetGame : function () {
-          var confirm = window.confirm("Are you sure you want to start a new game?");
-          if (!confirm) return;
+        resetGameData: function () {
           this.data = {
             turn : 0,
             stage : 0,
@@ -163,17 +164,17 @@
         },
 
         setTurn: function (turn) {
-          if (!this.data) this.resetGame();
+          // if (!this.data) this.resetGame();
           this.data.turn = turn || 0;
         },
 
         setPlayers: function (players) {
-          if (!this.data) this.resetGame();
+          // if (!this.data) this.resetGame();
           this.data.players = players || [];
         },
 
         setStage: function (stage) {
-          if (!this.data) this.resetGame();
+          // if (!this.data) this.resetGame();
           this.data.stage = stage || 0;
         },
 
