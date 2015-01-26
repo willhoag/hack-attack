@@ -13,11 +13,13 @@
   };
 
   Game.prototype.replacePlayer = function (truthTest, newPlayer) {
-    R.forEachIndexed(function (player, i) {
+    var i = 0;
+    for (var player in this.players) {
+      i ++;
       if (truthTest(player)) {
-        return this.players.splice(i, 1, newPlayer);
+        this.players.splice(i, 1, newPlayer);
       }
-    });
+    }
   };
 
   Game.prototype.start = function () {

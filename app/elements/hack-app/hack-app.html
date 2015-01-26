@@ -51,12 +51,17 @@
         on-tap="{{joinGame}}">
         Join Game
       </paper-button>
+      <paper-button raised flex
+        hidden?="{{!data}}"
+        on-tap="{{initGameData}}">
+        Reset Game
+      </paper-button>
      </div>
     </div>
 
   </template>
   <script>
-    (function (app, RSVP) {
+    (function (app, R, RSVP) {
       Polymer({
         url : "https://ss15-rhythm.firebaseio.com/",
         game_id : "defaultGame",
@@ -89,21 +94,34 @@
         joinGame: function () {
           var that = this;
 
-          if (!this.data) { this.resetGameData(); }
+          if (!this.data) { this.initGameData(); }
 
-          for (var player in that.data.players) {
+          // add players to game from fb
+          R.forEach(function(player) {
             app.game.addPlayer(new app.Player(player));
-          }
+          }, this.data.players || []);
 
+          // get current user
           this.getUserAuth().then(function(userAuth) {
-            var userData = R.find(R.propEq('uid', userAuth.uid), that.data.players);
+
+            var hasMyId = R.propEq('uid', userAuth.uid);
+
+            // get their data from fb
+            var userData = R.find(hasMyId)(that.data.players || []);
+
+            // if user hasn't saved data on fb
             if (!userData) {
+
+              // add player with new data
               userData = {uid: userAuth.uid};
               app.game.addPlayer(new app.Player(userData));
               that.setPlayers(app.game.players);
             } else {
-              app.game.replacePlayers(R.propEq('uid', userAuth.id), new app.Player(data))
+
+              // replace player with an instance of Player
+              app.game.replacePlayers(hasMyId, new app.Player(userData));
             }
+
             that.joined = true;
           });
         },
@@ -150,30 +168,26 @@
           });
         },
 
-        resetGameData: function () {
-          this.data = {
-            turn : 0,
-            stage : 0,
-            players : []
-          }
+        initGameData: function () {
+          this.data = {};
         },
 
         setTurn: function (turn) {
-          // if (!this.data) this.resetGame();
+          // if (!this.data) this.initGameData();
           this.data.turn = turn || 0;
         },
 
         setPlayers: function (players) {
-          // if (!this.data) this.resetGame();
+          // if (!this.data) this.initGameData();
           this.data.players = players || [];
         },
 
         setStage: function (stage) {
-          // if (!this.data) this.resetGame();
+          // if (!this.data) this.initGameData();
           this.data.stage = stage || 0;
         },
 
       });
-    })(app, RSVP);
+    })(app, R, RSVP);
   </script>
 </polymer-element>
