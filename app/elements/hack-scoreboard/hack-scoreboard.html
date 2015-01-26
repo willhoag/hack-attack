@@ -5,11 +5,11 @@
     <link rel="stylesheet" href="hack-scoreboard.css">
     <div horizontal layout id="container">
       <div class="cell {{ {active: activePlayer == 0} | tokenList}}">
-        <div class="score_value">{{player1_score}}</div>
+        <div class="score_value">{{player1_score || 0}}/20</div>
         <div class="label">player 1</div>
       </div>
       <div class="cell {{ {active: activePlayer == 1} | tokenList}}">
-        <div class="score_value">{{player2_score}}</div>
+        <div class="score_value">{{player2_score || 0}}/20</div>
         <div class="label">player 2</div>
       </div>
     </div>
