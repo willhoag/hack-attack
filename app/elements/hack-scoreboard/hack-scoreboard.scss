@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Bigshot+One);
+
 :host {
   display: block;
 }
@@ -5,7 +7,7 @@
 #container {
     position : absolute;
     right: 20px;
-    top: 5px;
+    top: 10px;
     color: #fff;
 }
 
@@ -17,7 +19,8 @@
 }
 
 .cell.active {
-    border: 1px solid #fff;
+    border: 1px solid rgba(255, 255, 255, 0.54);
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.15) inset;
 }
 
 .label {
@@ -28,4 +31,5 @@
 .score_value {
     font-size: 30pt;
     font-weight: bold;
+    font-family: 'Bigshot One', cursive;
 }
