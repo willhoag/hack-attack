@@ -76,7 +76,6 @@
         ready : function () {
           this.globals.firebase = this.url + this.game_id;
           console.log(this.globals.firebase);
-          this.resetGameData()
         },
 
         startGame: function() {
@@ -89,9 +88,22 @@
 
         joinGame: function () {
           var that = this;
-          this.getUserId().then(function(uid) {
-            app.game.addPlayer(new app.Player(uid));
-            that.setPlayers(app.game.players);
+
+          if (!this.data) { this.resetGameData(); }
+
+          for (var player in that.data.players) {
+            app.game.addPlayer(new app.Player(player));
+          }
+
+          this.getUserAuth().then(function(userAuth) {
+            var userData = R.find(R.propEq('uid', userAuth.uid), that.data.players);
+            if (!userData) {
+              userData = {uid: userAuth.uid};
+              app.game.addPlayer(new app.Player(userData));
+              that.setPlayers(app.game.players);
+            } else {
+              app.game.replacePlayers(R.propEq('uid', userAuth.id), new app.Player(data))
+            }
             that.joined = true;
           });
         },
@@ -123,33 +135,16 @@
           this.stage.action();
         },
 
-        getUserId: function () {
+        getUserAuth: function () {
           var that = this;
           return new RSVP.Promise(function(resolve, reject) {
-            if (!that.userAuth) {
-              that.updateUserAuth().then(function(userAuth){
-                resolve(userAuth.uid);
-              }, function(error) {
-                reject(error);
-                console.log(error);
-              });
-            } else {
-              that.resolve(that.userAuth.uid);
-            }
-          });
-        },
-
-        updateUserAuth: function () {
-          var that = this;
-          return new RSVP.Promise(function(resolve, reject) {
-            that.fbRef.authAnonymously(function(error, authData) {
+            that.fbRef.authAnonymously(function(error, userAuth) {
               if (error) {
                 reject(error);
                 console.log("Login Failed!", error);
               } else {
-                that.userAuth = authData;
-                resolve(authData);
-                console.log("Authenticated successfully with payload:", authData);
+                resolve(userAuth);
+                console.log("Authenticated successfully with payload:", userAuth);
               }
             });
           });

@@ -12,6 +12,14 @@
     this.players.push(player);
   };
 
+  Game.prototype.replacePlayer = function (truthTest, newPlayer) {
+    R.forEachIndexed(function (player, i) {
+      if (truthTest(player)) {
+        return this.players.splice(i, 1, newPlayer);
+      }
+    });
+  };
+
   Game.prototype.start = function () {
     this.startTime = new Date();
     this.startConstructor.apply(this);
