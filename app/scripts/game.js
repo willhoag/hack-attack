@@ -13,13 +13,7 @@
   };
 
   Game.prototype.replacePlayer = function (truthTest, newPlayer) {
-    var i = 0;
-    for (var player in this.players) {
-      i ++;
-      if (truthTest(player)) {
-        this.players.splice(i, 1, newPlayer);
-      }
-    }
+    return exports.utils.replaceBy(truthTest, newPlayer, this.players);
   };
 
   Game.prototype.start = function () {

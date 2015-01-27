@@ -2,17 +2,15 @@
 <link rel="import" href="../../bower_components/firebase-element/firebase-element.html">
 <link rel="import" href="../../bower_components/pvc-globals/pvc-globals.html">
 
-
 <link rel="import" href="../../bower_components/core-icon/core-icon.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
-
 <link rel="import" href="../../elements/hack-header/hack-header.html">
 <link rel="import" href="../../elements/hack-table/hack-table.html">
 
-<polymer-element name="hack-app" attributes="game_id">
+<polymer-element name="hack-app" attributes="gameId">
   <template>
     <link rel="stylesheet" href="hack-app.css">
 
@@ -22,27 +20,31 @@
       keys="{{keys}}"
       ref="{{fbRef}}"
       childEvents
-      on-child-changed={{childUpdated}}
-      >
+      on-child-changed={{childUpdated}}>
     </firebase-element>
     <pvc-globals values="{{globals}}"></pvc-globals>
 
     <div>
-      <hack-header game_id="{{game_id}}" player_id="{{player_id}}" game={{game}}></hack-header>
-      <hack-table game_id="{{game_id}}" player_id="{{player_id}}"></hack-table>
+      <hack-header
+        started="{{data.started}}"
+        turnIndex="{{data.turnIndex}}"
+        message="{{data.discription}}"
+        players="{{data.players}}"
+        gameId="{{gameId}}">
+      </hack-header>
+      <hack-table gameId="{{gameId}}"></hack-table>
     </div>
 
-    <!-- TEMPORARY FOR TESTING -->
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
      <div horizontal layout>
       <paper-button raised flex
-        hidden?="{{!started}}"
+        hidden?="{{!data.started}}"
         on-tap="{{nextStage}}">
         <core-icon icon="arrow-forward"></core-icon>
         Next Step
       </paper-button>
       <paper-button raised flex
-        hidden?="{{started || !joined}}"
+        hidden?="{{data.started || !joined}}"
         on-tap="{{startGame}}">
         Start Game
       </paper-button>
@@ -53,7 +55,7 @@
       </paper-button>
       <paper-button raised flex
         hidden?="{{!data}}"
-        on-tap="{{initGameData}}">
+        on-tap="{{resetGame}}">
         Reset Game
       </paper-button>
      </div>
@@ -62,131 +64,110 @@
   </template>
   <script>
     (function (app, R, RSVP) {
-      Polymer({
-        url : "https://ss15-rhythm.firebaseio.com/",
-        game_id : "defaultGame",
-        player_id: "",
-        joined: false,
-        userAuth: null,
-        started: false,
-        game: {},
-        turns: {},
-        turn: {},
-        stage: {},
-        currentPlayer: {},
-        turnIndex : 0,
-        stageIndex: 0,
-        message: '',
+      'use strict';
 
-        ready : function () {
-          this.globals.firebase = this.url + this.game_id;
-          console.log(this.globals.firebase);
+      var game, Player;
+
+      Polymer({
+
+        url : 'https://ss15-rhythm.firebaseio.com/',
+        gameId : 'defaultGame',
+        joined: false,
+
+        ready: function () {
+          this.globals.firebase = this.url + this.gameId;
+          game = app.game;
+          Player = app.Player;
         },
 
         startGame: function() {
-          app.game.start();
-          this.started = true;
-          this.game = app.game;
-          this.turns = this.game.turns;
+          game.start();
+          this.data.started = true;
           this.update();
+        },
+
+        observe: {
+          'data.players': 'updatePlayers'
+        },
+
+        // TODO -- Make update Player instances instead of
+        // replacing with new data.players
+        updatePlayers: function () {
+          game.players = this.data.players;
         },
 
         joinGame: function () {
           var that = this;
-
-          if (!this.data) { this.initGameData(); }
-
-          // add players to game from fb
-          R.forEach(function(player) {
-            app.game.addPlayer(new app.Player(player));
-          }, this.data.players || []);
+          if (!that.data) { that.initGameData(); }
 
           // get current user
-          this.getUserAuth().then(function(userAuth) {
+          this.authenticate().then(function(userAuth) {
 
-            var hasMyId = R.propEq('uid', userAuth.uid);
+            // add players to game from fb
+            var players = R.map(function(player) {
+              return new Player(player);
+            }, that.data.players || []);
 
-            // get their data from fb
-            var userData = R.find(hasMyId)(that.data.players || []);
+            // add me
+            players.push(new Player({uid: userAuth.uid}));
 
-            // if user hasn't saved data on fb
-            if (!userData) {
-
-              // add player with new data
-              userData = {uid: userAuth.uid};
-              app.game.addPlayer(new app.Player(userData));
-              that.setPlayers(app.game.players);
-            } else {
-
-              // replace player with an instance of Player
-              app.game.replacePlayers(hasMyId, new app.Player(userData));
-            }
-
+            // save
+            that.data.players = players;
             that.joined = true;
           });
         },
 
         update: function () {
-          this.turn = this.turns.getCurrent();
-          this.stage = this.turn.getCurrentStage();
-          this.currentPlayer = this.turn.player;
-          this.turnIndex = this.turns.index;
-          this.stageIndex = this.turn.index;
-          this.message = this.stage.description;
+          var turn = game.turns.current;
+          var stage = turn.getStage();
+          this.data.turnIndex = game.turns.index;
+          this.data.stageIndex = turn.index;
+          this.data.message = stage.description;
         },
 
         nextTurn: function () {
-          this.turns.nextTurn();
+          game.turns.nextTurn();
           this.update();
         },
 
         nextStage: function () {
-          this.turn.nextStage();
-          if (this.stage) {
+          var stage = game.turns.current.nextStage();
+          if (stage) {
             this.update();
           } else {
             this.nextTurn();
           }
         },
 
-        doStageAction: function () {
-          this.stage.action();
-        },
-
-        getUserAuth: function () {
+        authenticate: function () {
           var that = this;
           return new RSVP.Promise(function(resolve, reject) {
             that.fbRef.authAnonymously(function(error, userAuth) {
               if (error) {
                 reject(error);
-                console.log("Login Failed!", error);
+                console.log('Login Failed!', error);
               } else {
                 resolve(userAuth);
-                console.log("Authenticated successfully with payload:", userAuth);
+                console.log('Authenticated successfully with payload:', userAuth);
               }
             });
           });
+        },
+
+        // TODO -- Make reset cards
+        resetGame: function () {
+          this.initGameData();
+          this.joined = false;
         },
 
         initGameData: function () {
           this.data = {};
         },
 
-        setTurn: function (turn) {
-          // if (!this.data) this.initGameData();
-          this.data.turn = turn || 0;
-        },
-
         setPlayers: function (players) {
           // if (!this.data) this.initGameData();
           this.data.players = players || [];
-        },
-
-        setStage: function (stage) {
-          // if (!this.data) this.initGameData();
-          this.data.stage = stage || 0;
-        },
-
+        }
       });
     })(app, R, RSVP);
   </script>

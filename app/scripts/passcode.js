@@ -8,16 +8,12 @@
   }
 
   Passcode.prototype.regenerate = function () {
-    var newCode = [];
-    for (var i = 0; i < this.digits; i++) {
-      newCode.push(Math.floor((Math.random() * 10) + 1));
-    }
-    this.code = newCode;
+    this.code = Math.floor((Math.random() * Math.pow(10, 3)) + 1);
   };
 
   // returns difference from actual number
-  Passcode.prototype.guess = function (index, guess) {
-    return this.code[parseInt(index)] - parseInt(guess);
+  Passcode.prototype.guess = function (guess) {
+    return this.code - parseInt(guess);
   };
 
   exports.Passcode = Passcode;

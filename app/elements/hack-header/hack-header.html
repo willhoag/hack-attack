@@ -3,7 +3,7 @@
 <link rel="import" href="../../elements/hack-scoreboard/hack-scoreboard.html">
 <link rel="import" href="../../elements/hack-statusbar/hack-statusbar.html">
 
-<polymer-element name="hack-header" attributes="game_id player_id">
+<polymer-element name="hack-header" attributes="gameId started players turnIndex message" noscript>
 
   <template>
     <link rel="stylesheet" href="hack-header.css">
@@ -11,31 +11,15 @@
       <div id="logo"></div>
       <div>
         <h1>Hack Attack <paper-icon-button icon="link"></paper-icon-button></h1>
-        <p>Get the data, before they get you. ({{game_id}})</p>
+        <p>Get the data, before they get you. ({{gameId}})</p>
       </div>
       <hack-scoreboard
         hidden?="{{!started}}"
-        turn="{{turns.index}}"
-        player1_score="{{player1Score}}"
-        player2_score="{{player2Score}}">
+        turn="{{turnIndex}}"
+        players="{{players}}">
       </hack-scoreboard>
     </header>
     <hack-statusbar message="{{message}}"></hack-statusbar>
   </template>
-
-  <script>
-    (function (app) {
-      'use strict';
-      Polymer({
-        ready: function() {
-          var that = this;
-          app.game.started.then(function (game) {
-            that.started = true;
-          })
-        },
-        started: false
-      });
-    })(app);
-  </script>
 
 </polymer-element>

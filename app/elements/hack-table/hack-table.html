@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../elements/hack-deck/hack-deck.html">
-<polymer-element name="hack-table" attributes="game_id player_id">
+
+<polymer-element name="hack-table" attributes="gameId">
   <template>
     <link rel="stylesheet" href="hack-table.css">
     <div fit vertical layout>
@@ -13,7 +14,7 @@
     </div>
   </template>
   <script>
-    (function () {
+    (function (app) {
       Polymer({
         ready: function () {
           var that = this;
@@ -22,6 +23,6 @@
           });
         }
       });
-    })();
+    })(app);
   </script>
 </polymer-element>

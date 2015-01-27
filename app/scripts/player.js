@@ -1,4 +1,4 @@
-(function(exports, R) {
+(function(exports) {
   'use strict';
 
   function Player(spec) {
@@ -9,14 +9,15 @@
     this.computers = 20;
     this.connected = 3;
 
-    for (var key in spec) {
-      this[key] = spec[key];
-    }
-
-    console.log('made player', this);
-
+    this.updateData(spec);
   }
+
+  Player.prototype.updateData = function (data) {
+    for (var key in data) {
+      this[key] = data[key];
+    }
+  };
 
   exports.Player = Player;
 
-}(app, R));
+}(app));

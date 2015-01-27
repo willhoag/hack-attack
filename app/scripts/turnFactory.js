@@ -11,10 +11,10 @@
 
     Turn.prototype.nextStage = function () {
       this.index += 1;
-      return this.getCurrentStage();
+      return this.getStage();
     };
 
-    Turn.prototype.getCurrentStage = function () {
+    Turn.prototype.getStage = function () {
       return this.stages[this.index];
     };
 

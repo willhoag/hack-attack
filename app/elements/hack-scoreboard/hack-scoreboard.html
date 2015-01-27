@@ -1,30 +1,15 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<polymer-element name="hack-scoreboard" attributes="turn player1_score player2_score">
+<polymer-element name="hack-scoreboard" attributes="turn players" noscript>
   <template>
     <link rel="stylesheet" href="hack-scoreboard.css">
     <div horizontal layout id="container">
-      <div class="cell {{ {active: activePlayer == 0} | tokenList}}">
-        <div class="score_value">{{player1_score || 0}}/20</div>
-        <div class="label">player 1</div>
-      </div>
-      <div class="cell {{ {active: activePlayer == 1} | tokenList}}">
-        <div class="score_value">{{player2_score || 0}}/20</div>
-        <div class="label">player 2</div>
-      </div>
+      <template repeat="player in players">
+        <div class="cell {{ {active: players[turn] == player} | tokenList}}">
+          <div class="score_value">{{player.points || 0}}/20</div>
+          <div class="label">{{player.uid}}</div>
+        </div>
+      </template>
     </div>
   </template>
-  <script>
-    (function () {
-      Polymer({
-        activePlayer : 0,
-
-        turnChanged : function () {
-          var isEven = (this.turn % 2 == 0)
-          if (isEven) this.activePlayer = 0;
-          else this.activePlayer = 1;
-        }
-      });
-    })();
-  </script>
 </polymer-element>

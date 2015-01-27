@@ -3,7 +3,7 @@
 
   function startConstructor() {
     this.adminDeck = new app.Deck(app.adminCards);
-    this.turns = new app.Turns(this.players, new app.turnFactory(app.stages));
+    this.turns = new app.Turns(this.players, app.turnFactory(app.stages));
     this.passcode = new app.Passcode(3);
     this.adminDeck.shuffle();
   }
