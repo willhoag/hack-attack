@@ -44,6 +44,7 @@
     description: 'Bummer, the admin changed the password, no data was accessed.',
     settings: {
       points: 0,
+      holdable: false
     },
     image: {
       front: 'images/blank.png',
