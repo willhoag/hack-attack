@@ -1,21 +1,43 @@
 :host {
   display: block;
+  position: relative;
+  width: 200px;
+  height: 300px;
 }
 
 #container {
-    position: relative;
-    margin-top: 20px;
+    position: absolute;
+    top: 50%;
     left: 50%;
-    margin-left: -78px;
+    width: 155px;
+    height: 225px;
+    margin-top: -112px;
+    margin-left: -75px;
 }
 
+
+// Card Stack
 #container :nth-child(1){position: absolute; top: 0px; left: 0px; z-index:5;  display: inherit;}
 #container :nth-child(2){position: absolute; top: 2px; left: 1px; z-index:4;  display: inherit;}
 #container :nth-child(3){position: absolute; top: 4px; left: 2px; z-index:3;  display: inherit;}
 #container :nth-child(4){position: absolute; top: 6px; left: 3px; z-index:2;  display: inherit;}
 #container :nth-child(5){position: absolute; top: 8px; left: 4px; z-index:1;  display: inherit;}
 
-// Position rest of cards
+// Position and hide rest of cards
 hack-card-admin {
     position: absolute; top: 12px; left: 8px; z-index:1; display: none;
+}
+
+.button {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    width: 155px;
+    margin-left: -75px;
+    background: rgba(255,255,255,0.8);
+    font-size: 10pt;
+}
+
+.button:hover {
+    background: rgba(255,255,255,1);
 }
