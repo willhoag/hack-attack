@@ -32,7 +32,7 @@
         players="{{data.players}}"
         gameId="{{gameId}}">
       </hack-header>
-      <hack-table gameId="{{gameId}}"></hack-table>
+      <hack-table gameId="{{gameId}}" cards={{cards}}></hack-table>
     </div>
 
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
@@ -84,6 +84,7 @@
           game.start();
           this.data.started = true;
           this.update();
+          this.cards = game.adminDeck.cards;
         },
 
         observe: {
