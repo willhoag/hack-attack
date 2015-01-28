@@ -4,8 +4,6 @@
   function Game(playerArray, startConstructor) {
     this.players = playerArray || [];
     this.startConstructor = startConstructor;
-    this._deferred = RSVP.defer();
-    this.started = this._deferred.promise;
   }
 
   Game.prototype.addPlayer = function (player) {
@@ -19,7 +17,6 @@
   Game.prototype.start = function () {
     this.startTime = new Date();
     this.startConstructor.apply(this);
-    this._deferred.resolve(this);
   };
 
   Game.prototype.getTimeElapsed = function () {
