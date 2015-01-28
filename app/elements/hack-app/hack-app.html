@@ -73,6 +73,7 @@
         url : 'https://ss15-rhythm.firebaseio.com/',
         gameId : 'defaultGame',
         joined: false,
+        observe: { 'data.players': 'updatePlayers' },
 
         ready: function () {
           this.globals.firebase = this.url + this.gameId;
@@ -83,12 +84,9 @@
         startGame: function() {
           game.start();
           this.data.started = true;
-          this.update();
           this.cards = game.adminDeck.cards;
-        },
-
-        observe: {
-          'data.players': 'updatePlayers'
+          this.turns = game.turns;
+          this.updateTurn();
         },
 
         // TODO -- Make update Player instances instead of
@@ -118,23 +116,26 @@
           });
         },
 
-        update: function () {
-          var turn = game.turns.current;
-          var stage = turn.getStage();
+        updateTurn: function () {
+          this.turn = this.turns.current;
           this.data.turnIndex = game.turns.index;
-          this.data.stageIndex = turn.index;
-          this.data.message = stage.description;
+          this.updateStage();
+        },
+
+        updateStage: function () {
+          this.stage = this.turn.getStage();
+          this.data.stageIndex = this.turn.index;
+          this.data.message = this.stage.description;
         },
 
         nextTurn: function () {
           game.turns.nextTurn();
-          this.update();
+          this.updateTurn();
         },
 
         nextStage: function () {
-          var stage = game.turns.current.nextStage();
-          if (stage) {
-            this.update();
+          if (this.turn.nextStage() ) {
+            this.updateStage();
           } else {
             this.nextTurn();
           }
