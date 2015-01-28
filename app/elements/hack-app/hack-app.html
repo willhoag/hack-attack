@@ -22,6 +22,14 @@
       childEvents
       on-child-changed={{childUpdated}}>
     </firebase-element>
+
+    <firebase-element id="root"
+      location="{{url}}"
+      data="{{rootData}}"
+      keys="{{rootKeys}}"
+      ref="{{rootRef}}">
+    </firebase-element>
+
     <pvc-globals values="{{globals}}"></pvc-globals>
 
     <div>
@@ -87,6 +95,19 @@
           this.cards = game.adminDeck.cards;
           this.turns = game.turns;
           this.updateTurn();
+        },
+
+        rootDataChanged : function () {
+          this.newGameId(this.gameId);
+        },
+
+        newGameId : function (id) {
+          var validId = (this.rootKeys.indexOf(id.toString()) !== -1 && id !== "");
+          if (!validId) {
+            var newId = this.rootRef.push({'bogus':'data'}).key();
+            this.gameId = newId;
+            window.location.hash = '#/' + newId;
+          }
         },
 
         // TODO -- Make update Player instances instead of
