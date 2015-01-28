@@ -3,7 +3,7 @@
 <link rel="import" href="../../elements/hack-scoreboard/hack-scoreboard.html">
 <link rel="import" href="../../elements/hack-statusbar/hack-statusbar.html">
 
-<polymer-element name="hack-header" attributes="gameId started players turnIndex message" noscript>
+<polymer-element name="hack-header" attributes="gameId players turnIndex message" noscript>
 
   <template>
     <link rel="stylesheet" href="hack-header.css">
@@ -14,7 +14,6 @@
         <p>Get the data, before they get you. ({{gameId}})</p>
       </div>
       <hack-scoreboard
-        hidden?="{{!started}}"
         turn="{{turnIndex}}"
         players="{{players}}">
       </hack-scoreboard>

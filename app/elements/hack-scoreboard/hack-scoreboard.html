@@ -4,7 +4,7 @@
   <template>
     <link rel="stylesheet" href="hack-scoreboard.css">
     <div horizontal layout id="container">
-      <template repeat="player in players">
+      <template repeat="{{player in players}}">
         <div class="cell {{ {active: players[turn] == player} | tokenList}}">
           <div class="score_value">{{player.points || 0}}/20</div>
           <div class="label">{{player.uid}}</div>
