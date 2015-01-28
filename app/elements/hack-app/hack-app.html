@@ -46,10 +46,10 @@
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
      <div horizontal layout>
       <paper-button raised flex
-        hidden?="{{!data.started}}"
+        hidden?="{{!data.started || data.turnIndex !== meIndex }}"
         on-tap="{{nextStage}}">
         <core-icon icon="arrow-forward"></core-icon>
-        Next Step
+        Next
       </paper-button>
       <paper-button raised flex
         hidden?="{{data.started || !joined}}"
@@ -129,6 +129,7 @@
             }, that.data.players || []);
 
             // add me
+            that.meIndex = players.length;
             players.push(new Player({uid: userAuth.uid}));
 
             // save
@@ -139,7 +140,7 @@
 
         updateTurn: function () {
           this.turn = this.turns.current;
-          this.data.turnIndex = game.turns.index;
+          this.data.turnIndex = this.turns.index;
           this.updateStage();
         },
 
