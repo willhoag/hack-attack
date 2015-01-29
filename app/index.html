@@ -15,7 +15,7 @@
     <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
     <script src="bower_components/ramda/dist/ramda.min.js"></script>
     <script src="bower_components/rsvp/rsvp.min.js"></script>
-    <script src="scripts/inits.js"></script>
+    <script src="scripts/globals.js"></script>
     <!-- endbuild -->
 
     <!-- build:vulcanized elements/elements.vulcanized.html -->
@@ -25,13 +25,17 @@
 
   <body unresolved fullbleed>
     <!-- build:js scripts/app.js -->
-    <script src="scripts/replaceBy.js"></script>
+    <script src="scripts/utils/replaceBy.js"></script>
+    <script src="scripts/utils/defaults.js"></script>
+    <script src="scripts/utils/clamp.js"></script>
+    <script src="scripts/utils/getFromIndex.js"></script>
+    <script src="scripts/utils/fisherYates.js"></script>
     <script src="scripts/passcode.js"></script>
     <script src="scripts/player.js"></script>
     <script src="scripts/game.js"></script>
     <script src="scripts/deck.js"></script>
     <script src="scripts/turns.js"></script>
-    <script src="scripts/turnFactory.js"></script>
+    <script src="scripts/stagesFactory.js"></script>
     <script src="scripts/adminCards.js"></script>
     <script src="scripts/stages.js"></script>
     <script src="scripts/app.js"></script>

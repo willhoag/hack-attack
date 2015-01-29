@@ -1,19 +1,16 @@
-(function(exports, R) {
+(function(app, R) {
   'use strict';
 
   var performCardAction = R.curry(function (card, player) {
     card.action(player);
   });
 
-  var clamp = function(min, max, value) {
-    return Math.min(Math.max(value, min), max);
-  };
 
   var networking = {
       title: 'Networking',
       description: 'Choose up to 3 connections to attack server.',
       finish: function (numberOfCards) {
-         return clamp(1, 3, numberOfCards);
+         return app.utils.clamp(1, 3, numberOfCards);
       }
     };
 
@@ -37,5 +34,5 @@
       }
     };
 
-  exports.stages = [networking, attacking, admin];
+  app.stages = [networking, attacking, admin];
 }(app, R));

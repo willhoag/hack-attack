@@ -40,13 +40,13 @@
         players="{{data.players}}"
         gameId="{{gameId}}">
       </hack-header>
-      <hack-table gameId="{{gameId}}" cards={{cards}}></hack-table>
+      <hack-table gameId="{{gameId}}" cards={{adminCards}} deck="{{deck}}"></hack-table>
     </div>
 
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
      <div horizontal layout>
       <paper-button raised flex
-        hidden?="{{!data.started || data.turnIndex !== meIndex }}"
+        hidden?="{{!data.started || isCurrentPlayer() }}"
         on-tap="{{nextStage}}">
         <core-icon icon="arrow-forward"></core-icon>
         Next
@@ -81,28 +81,32 @@
         url : 'https://ss15-rhythm.firebaseio.com/',
         gameId : 'defaultGame',
         joined: false,
-        observe: { 'data.players': 'updatePlayers' },
+        userAuth: {
+          uid: null
+        },
+        observe: {
+          'data.started': 'initGame',
+          'data.deck': 'updateDeck'
+          },
+
+        adminCards: app.adminCards,
 
         ready: function () {
           this.globals.firebase = this.url + this.gameId;
-          game = app.game;
+          this.game = game = app.game;
           Player = app.Player;
         },
 
-        startGame: function() {
-          game.start();
-          this.data.started = true;
-          this.cards = game.adminDeck.cards;
-          this.turns = game.turns;
-          this.updateTurn();
-        },
-
-        rootDataChanged : function () {
+        rootDataChanged: function () {
           this.newGameId(this.gameId);
         },
 
-        newGameId : function (id) {
-          var validId = (this.rootKeys.indexOf(id.toString()) !== -1 && id !== "");
+        isCurrentPlayer: function () {
+          return game.turns.isCurrentPlayer(this.userAuth.uid);
+        },
+
+        newGameId: function (id) {
+          var validId = (this.rootKeys.indexOf(id.toString()) !== -1 && id !== '');
           if (!validId) {
             var newId = this.rootRef.push({'bogus':'data'}).key();
             this.gameId = newId;
@@ -110,57 +114,52 @@
           }
         },
 
-        // TODO -- Make update Player instances instead of
-        // replacing with new data.players
-        updatePlayers: function () {
-          game.players = this.data.players;
+        startGame: function() {
+          this.data.started = true;
+          game.started.then(function (game) {
+            game.adminDeck.shuffle();
+          });
+        },
+
+        initGame: function () {
+          game.setModel(this.data);
+          game.start();
+          this.deck = R.map(this.data.deck);
+          this.updateMessage();
+        },
+
+        updateDeck: function () {
+          this.deck = R.map(app.utils.getFromIndex(app.adminCards), this.data.deck);
         },
 
         joinGame: function () {
           var that = this;
-          if (!that.data) { that.initGameData(); }
+          if (!that.data) { that.initData(); }
 
           // get current user
           this.authenticate().then(function(userAuth) {
 
-            // add players to game from fb
-            var players = R.map(function(player) {
-              return new Player(player);
-            }, that.data.players || []);
-
+            // TODO -- Check if this updates or I need to change the top level array
             // add me
-            that.meIndex = players.length;
-            players.push(new Player({uid: userAuth.uid}));
-
-            // save
-            that.data.players = players;
+            var me = new Player({uid: userAuth.uid});
+            that.data.players = R.concat([me], that.data.players || []);
             that.joined = true;
           });
         },
 
-        updateTurn: function () {
-          this.turn = this.turns.current;
-          this.data.turnIndex = this.turns.index;
-          this.updateStage();
-        },
-
-        updateStage: function () {
-          this.stage = this.turn.getStage();
-          this.data.stageIndex = this.turn.index;
-          this.data.message = this.stage.description;
+        updateMessage: function () {
+          this.data.message = game.turns.getStages().getCurrent().description;
         },
 
         nextTurn: function () {
           game.turns.nextTurn();
-          this.updateTurn();
         },
 
         nextStage: function () {
-          if (this.turn.nextStage() ) {
-            this.updateStage();
-          } else {
+          if (!game.turns.getStages().next()) {
             this.nextTurn();
           }
+          this.updateMessage();
         },
 
         authenticate: function () {
@@ -171,6 +170,7 @@
                 reject(error);
                 console.log('Login Failed!', error);
               } else {
+                that.userAuth = userAuth;
                 resolve(userAuth);
                 console.log('Authenticated successfully with payload:', userAuth);
               }
@@ -180,17 +180,12 @@
 
         // TODO -- Make reset cards
         resetGame: function () {
-          this.initGameData();
+          this.initData();
           this.joined = false;
         },
 
-        initGameData: function () {
+        initData: function () {
           this.data = {};
-        },
-
-        setPlayers: function (players) {
-          // if (!this.data) this.initGameData();
-          this.data.players = players || [];
         }
       });
     })(app, R, RSVP);

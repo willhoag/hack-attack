@@ -1,14 +1,14 @@
-(function (document, app) {
+(function (document, app, R) {
   'use strict';
 
   function startConstructor() {
-    this.adminDeck = new app.Deck(app.adminCards);
-    this.turns = new app.Turns(this.players, app.turnFactory(app.stages));
-    this.passcode = new app.Passcode(3);
-    this.adminDeck.shuffle();
+    var indexDeck = R.flatten(R.zipWith(R.repeat, [0, 1, 2, 3], [5, 5, 5, 5] ));
+    this.adminDeck = new app.Deck(this.model, indexDeck, 'deck');
+    this.turns = new app.Turns(this.model, app.stagesFactory(app.stages));
+    this.passcode = new app.Passcode(this.model);
   }
 
-  app.game = new app.Game([], startConstructor);
+  app.game = new app.Game({}, startConstructor);
 
   // Using the game
   // game.start();
@@ -39,4 +39,4 @@
 
 // wrap document so it plays nice with other libraries
 // http://www.polymer-project.org/platform/shadow-dom.html#wrappers
-})(wrap(document), app);
+})(wrap(document), app, R);

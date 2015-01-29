@@ -1,26 +1,32 @@
 (function(exports, R) {
   'use strict';
 
-  function Turns(players, Turn) {
-    this.players = players;
-    this.Turn = Turn;
-    this.iterations = 0;
-    this.index = 0;
-    this.current = null;
-    this.resetTurn();
+  function Turns(model, Stages) {
+
+    this.model = exports.utils.defaults(model, {
+      iterations: 0,
+      turnIndex: 0,
+      players: []
+    });
+
+    this.Stages = Stages;
   }
 
   Turns.prototype.nextTurn = function () {
-    this.index = (this.iterations += 1) % this.players.length
-    return this.resetTurn();
+    this.model.turnIndex = (this.model.iterations += 1) % this.model.players.length;
+    this.model.stageIndex = 0;
   };
 
-  Turns.prototype.resetTurn = function () {
-    return this.current = new this.Turn(this.getCurrentPlayer());
+  Turns.prototype.getStages = function () {
+    return new this.Stages(this.model);
   };
 
   Turns.prototype.getCurrentPlayer = function () {
-    return this.players[this.index];
+    return this.model.players[this.model.turnIndex];
+  };
+
+  Turns.prototype.isCurrentPlayer = function (uid) {
+    return this.getCurrentPlayer().uid === uid;
   };
 
   exports.Turns = Turns;

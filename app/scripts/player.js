@@ -1,23 +1,22 @@
-(function(exports) {
+(function(app) {
   'use strict';
 
-  function Player(spec) {
+  function Player(model) {
 
-    // Defaults
-    this.uid = 'cat';
-    this.points = 0;
-    this.computers = 20;
-    this.connected = 3;
+    model = app.utils.defaults(model, {
+      uid: 'cat',
+      points: 0,
+      computers: 20,
+      connected: 3,
+      hand: []
+    });
 
-    this.updateData(spec);
+    for (var prop in model) {
+      this[prop] = model[prop];
+    }
+
   }
 
-  Player.prototype.updateData = function (data) {
-    for (var key in data) {
-      this[key] = data[key];
-    }
-  };
-
-  exports.Player = Player;
+  app.Player = Player;
 
 }(app));

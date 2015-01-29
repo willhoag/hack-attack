@@ -1,4 +1,4 @@
-(function(exports) {
+(function(app) {
   'use strict';
 
   var hacked = {
@@ -73,14 +73,6 @@
     }
   };
 
-  var adminCards = [];
-
-  for (var i = 0; i < 5; i++) {
-    adminCards.push(hacked);
-    adminCards.push(data);
-    adminCards.push(invalid);
-    adminCards.push(offline);
-  }
-
-  exports.adminCards = adminCards;
+  app.adminCards = [hacked, data, invalid, offline];
+ 
 }(app));
