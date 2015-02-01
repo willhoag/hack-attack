@@ -2,11 +2,11 @@
 <link rel="import" href="../../elements/hack-card-admin/hack-card-admin.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
-<polymer-element name="hack-deck" attributes="cards deck type">
+<polymer-element name="hack-deck" attributes="cards type">
   <template>
     <link rel="stylesheet" href="hack-deck.css">
     <div id="container" hidden?={{deckEmpty}}>
-      <template repeat="{{card in deck}}">
+      <template repeat="{{card in cards | reverse}}">
         <hack-card-admin imgFront="/images/card_{{card.card}}.png" points="{{card.settings.points}}" cardTitle="{{card.title}}" msg="{{card.description}}" flipped=true></hack-card-admin>
       </template>
     </div>
@@ -27,12 +27,8 @@
       'use strict';
       Polymer({
         deckEmpty : true,
-        ready : function () {
-          console.log(this.cards);
-        },
         cardsChanged : function () {
           this.deckEmpty = !this.cards.length;
-          console.log('cards changed', this.cards);
         },
         drawCard : function () {
           app.game.adminDeck.draw();

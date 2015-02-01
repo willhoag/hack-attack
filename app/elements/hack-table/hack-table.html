@@ -1,14 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../elements/hack-deck/hack-deck.html">
 
-<polymer-element name="hack-table" attributes="gameId cards" noscript>
+<polymer-element name="hack-table" attributes="gameId deck" noscript>
   <template>
     <link rel="stylesheet" href="hack-table.css">
     <div fit vertical layout>
 <!--       <div id="opponent_computer_deck_row" flex one></div>
  -->      <div id="server_deck_row" flex three>
         <div horizontal around-justified layout>
-          <hack-deck cards="{{cards}}"></hack-deck>
+          <hack-deck cards="{{deck}}"></hack-deck>
         </div>
       </div>
     </div>

@@ -2,8 +2,7 @@
   'use strict';
 
   function startConstructor() {
-    var indexDeck = R.flatten(R.zipWith(R.repeat, [0, 1, 2, 3], [5, 5, 5, 5] ));
-    this.adminDeck = new app.Deck(this.model, indexDeck, 'deck');
+    this.adminDeck = new app.Deck(this.model, 'deck');
     this.turns = new app.Turns(this.model, app.stagesFactory(app.stages));
     this.passcode = new app.Passcode(this.model);
   }

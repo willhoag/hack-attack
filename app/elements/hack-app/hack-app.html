@@ -40,13 +40,13 @@
         players="{{data.players}}"
         gameId="{{gameId}}">
       </hack-header>
-      <hack-table gameId="{{gameId}}" cards={{adminCards}} deck="{{deck}}"></hack-table>
+      <hack-table gameId="{{gameId}}" deck="{{deck}}"></hack-table>
     </div>
 
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
      <div horizontal layout>
       <paper-button raised flex
-        hidden?="{{!data.started || isCurrentPlayer() }}"
+        hidden?="{{!data.started || !myTurn}}"
         on-tap="{{nextStage}}">
         <core-icon icon="arrow-forward"></core-icon>
         Next
@@ -60,11 +60,6 @@
         hidden?="{{joined}}"
         on-tap="{{joinGame}}">
         Join Game
-      </paper-button>
-      <paper-button raised flex
-        hidden?="{{!data}}"
-        on-tap="{{resetGame}}">
-        Reset Game
       </paper-button>
      </div>
     </div>
@@ -81,28 +76,23 @@
         url : 'https://ss15-rhythm.firebaseio.com/',
         gameId : 'defaultGame',
         joined: false,
-        userAuth: {
-          uid: null
-        },
+        myTurn: false,
         observe: {
           'data.started': 'initGame',
-          'data.deck': 'updateDeck'
+          'data.deck': 'updateDeck',
+          'data.turnIndex': 'updateMyTurn'
           },
-
         adminCards: app.adminCards,
+        userAuth: { uid: null },
 
         ready: function () {
           this.globals.firebase = this.url + this.gameId;
-          this.game = game = app.game;
+          game = this.game = app.game;
           Player = app.Player;
         },
 
         rootDataChanged: function () {
           this.newGameId(this.gameId);
-        },
-
-        isCurrentPlayer: function () {
-          return game.turns.isCurrentPlayer(this.userAuth.uid);
         },
 
         newGameId: function (id) {
@@ -115,8 +105,10 @@
         },
 
         startGame: function() {
+          var that = this;
           this.data.started = true;
           game.started.then(function (game) {
+            that.data.deck = R.flatten(R.zipWith(R.repeat, [0, 1, 2, 3], [5, 5, 5, 5] ));
             game.adminDeck.shuffle();
           });
         },
@@ -124,12 +116,7 @@
         initGame: function () {
           game.setModel(this.data);
           game.start();
-          this.deck = R.map(this.data.deck);
           this.updateMessage();
-        },
-
-        updateDeck: function () {
-          this.deck = R.map(app.utils.getFromIndex(app.adminCards), this.data.deck);
         },
 
         joinGame: function () {
@@ -139,27 +126,11 @@
           // get current user
           this.authenticate().then(function(userAuth) {
 
-            // TODO -- Check if this updates or I need to change the top level array
             // add me
             var me = new Player({uid: userAuth.uid});
-            that.data.players = R.concat([me], that.data.players || []);
+            that.data.players = R.concat(that.data.players || [], [me]);
             that.joined = true;
           });
-        },
-
-        updateMessage: function () {
-          this.data.message = game.turns.getStages().getCurrent().description;
-        },
-
-        nextTurn: function () {
-          game.turns.nextTurn();
-        },
-
-        nextStage: function () {
-          if (!game.turns.getStages().next()) {
-            this.nextTurn();
-          }
-          this.updateMessage();
         },
 
         authenticate: function () {
@@ -178,7 +149,33 @@
           });
         },
 
-        // TODO -- Make reset cards
+        updateDeck: function () {
+          this.deck = R.map(R.flip(R.nth)(app.adminCards), this.data.deck || []);
+        },
+
+        updateMyTurn: function () {
+          var that = this;
+          game.started.then(function(game){
+            that.myTurn = game.turns.isCurrentPlayer(that.userAuth.uid);
+          });
+        },
+
+        updateMessage: function () {
+          this.data.message = game.turns.getStages().getCurrent().description;
+        },
+
+        nextTurn: function () {
+          game.turns.nextTurn();
+        },
+
+        nextStage: function () {
+          if (!game.turns.getStages().next()) {
+            this.nextTurn();
+          }
+          this.updateMessage();
+        },
+
+        // TODO -- Reset all parts of game
         resetGame: function () {
           this.initData();
           this.joined = false;

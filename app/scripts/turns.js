@@ -26,7 +26,12 @@
   };
 
   Turns.prototype.isCurrentPlayer = function (uid) {
-    return this.getCurrentPlayer().uid === uid;
+    var player = this.getCurrentPlayer();
+    if (player) {
+      return player.uid === uid;
+    } else {
+      return false;
+    }
   };
 
   exports.Turns = Turns;

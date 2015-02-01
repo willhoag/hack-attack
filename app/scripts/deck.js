@@ -1,16 +1,19 @@
 'use strict';
 
-(function(exports, R) {
+(function(app, R) {
 
   function Deck(model, deck, name) {
     this.name = name || 'deck';
-    var defaults = {};
-    defaults[this.name] = deck;
-    this.model = exports.utils.defaults(model, defaults);
+    this.model = app.utils.defaults(model, {});
   }
 
   Deck.prototype.shuffle = function () {
-    return exports.utils.fisherYates(this.model.deck);
+    this.model[this.name] = app.utils.fisherYates(this.getDeck());
+    return this.getDeck();
+  };
+
+  Deck.prototype.getDeck = function () {
+    return this.model[this.name];
   };
 
   Deck.prototype.deal = function (numberOfCards, hands) {
@@ -24,9 +27,11 @@
   };
 
   Deck.prototype.draw = function (numberOfCards) {
-    return this.model[this.name]
-      .splice(-parseInt(numberOfCards), parseInt(numberOfCards) || 1);
+    var deck = this.getDeck() || [];
+    var cards = R.slice(0, numberOfCards || 1)(R.reverse(deck));
+    this.model[this.name] = R.take(deck.length - cards.length, deck);
+    return cards;
   };
 
-  exports.Deck = Deck;
+  app.Deck = Deck;
 }(app, R));
