@@ -77,13 +77,12 @@
         gameId : 'defaultGame',
         joined: false,
         myTurn: false,
+        userAuth: { uid: null },
         observe: {
           'data.started': 'initGame',
           'data.deck': 'updateDeck',
           'data.turnIndex': 'updateMyTurn'
           },
-        adminCards: app.adminCards,
-        userAuth: { uid: null },
 
         ready: function () {
           this.globals.firebase = this.url + this.gameId;
