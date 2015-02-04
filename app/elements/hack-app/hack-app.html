@@ -44,24 +44,44 @@
     </div>
 
     <div style="position: absolute; bottom: 0; background : #fff; left:0; right: 0;">
-     <div horizontal layout>
-      <paper-button raised flex
-        hidden?="{{!data.started || !myTurn}}"
-        on-tap="{{nextStage}}">
-        <core-icon icon="arrow-forward"></core-icon>
-        Next
-      </paper-button>
-      <paper-button raised flex
-        hidden?="{{data.started || !joined}}"
-        on-tap="{{startGame}}">
-        Start Game
-      </paper-button>
-      <paper-button raised flex
-        hidden?="{{joined}}"
-        on-tap="{{joinGame}}">
-        Join Game
-      </paper-button>
-     </div>
+
+      <div horizontal hidden?="{{!myTurn || !data.started}}">
+        <paper-button raised flex
+          on-tap="{{step}}">
+          <core-icon icon="arrow-forward"></core-icon>
+          Next
+        </paper-button>
+        <paper-input raised flex
+          hidden?="{{data.stageIndex !== 0}}"
+          label="Number Of Connections"
+          type='number',
+          value="{{connectionsValue}}">
+        </paper-input>
+        <paper-input raised flex
+          hidden?="{{data.stageIndex !== 1}}"
+          label="Guess Passcode"
+          type='number',
+          value="{{guessValue}}">
+        </paper-input>
+      </div>
+
+      <div hidden?="{{myTurn || !data.started}}">
+        Turn {{data.stageIndex}}
+      </div>
+
+      <div horizontal hidden?={{data.started}}>
+        <paper-button raised flex
+          hidden?="{{!joined}}"
+          on-tap="{{startGame}}">
+          Start Game
+        </paper-button>
+        <paper-button raised flex
+          hidden?="{{joined}}"
+          on-tap="{{joinGame}}">
+          Join Game
+        </paper-button>
+      </div>
+
     </div>
 
   </template>
@@ -73,17 +93,57 @@
 
       Polymer({
 
+        // Model
         url : 'https://ss15-rhythm.firebaseio.com/',
         gameId : 'defaultGame',
         joined: false,
         myTurn: false,
+        connectionsValue: 3,
+        guessValue: 0,
+        guessIndex: 0,
+        guessedPasscode: false,
         userAuth: { uid: null },
+
+        // Observations
         observe: {
           'data.started': 'initGame',
           'data.deck': 'updateDeck',
-          'data.turnIndex': 'updateMyTurn'
+          'data.turnIndex': 'updateMyTurn',
+          'data.endTime': 'gameEnded',
           },
 
+        // Stage Behavior
+        stages: [
+          function stage1() {
+            var player = game.turns.getCurrentPlayer();
+            game.turns.getCurrentStage().action(this.connectionsValue, player);
+            this.updatePlayers();
+          },
+          function stage2() {
+            var guess = game.turns.getCurrentStage().action(game.passcode, this.guessValue);
+            var message = null;
+            if (guess === 1) { message = 'higher...';}
+            if (guess === -1) { message = 'lower...';}
+            if (guess === 0) {
+              message = 'you guessed correctly';
+              this.guessedPasscode = true;
+            }
+            window.alert(message);
+          },
+          function stage3() {
+            if (this.guessedPasscode) {
+              window.alert('you win!');
+            } else {
+              var player = game.turns.getCurrentPlayer();
+              var drawnCardIndexes = game.adminDeck.draw(this.connectionsValue);
+              var cards = app.utils.indexesToObjects(drawnCardIndexes, app.adminCards);
+              game.turns.getCurrentStage().action(cards, player);
+              this.updatePlayers();
+            }
+          }
+        ],
+
+        // Behavior
         ready: function () {
           this.globals.firebase = this.url + this.gameId;
           game = this.game = app.game;
@@ -109,13 +169,19 @@
           game.started.then(function (game) {
             that.data.deck = R.flatten(R.zipWith(R.repeat, [0, 1, 2, 3], [5, 5, 5, 5] ));
             game.adminDeck.shuffle();
+            that.updateMessage();
           });
+        },
+
+        gameEnded: function() {
+          if (game.endTime) {
+            window.alert('game over');
+          }
         },
 
         initGame: function () {
           game.setModel(this.data);
           game.start();
-          this.updateMessage();
         },
 
         joinGame: function () {
@@ -124,6 +190,7 @@
 
           // get current user
           this.authenticate().then(function(userAuth) {
+            that.userAuth = userAuth;
 
             // add me
             var me = new Player({uid: userAuth.uid});
@@ -140,7 +207,6 @@
                 reject(error);
                 console.log('Login Failed!', error);
               } else {
-                that.userAuth = userAuth;
                 resolve(userAuth);
                 console.log('Authenticated successfully with payload:', userAuth);
               }
@@ -149,7 +215,7 @@
         },
 
         updateDeck: function () {
-          this.deck = R.map(R.flip(R.nth)(app.adminCards), this.data.deck || []);
+          this.deck = app.utils.indexesToObjects(this.data.deck, app.adminCards);
         },
 
         updateMyTurn: function () {
@@ -159,17 +225,27 @@
           });
         },
 
-        updateMessage: function () {
-          this.data.message = game.turns.getStages().getCurrent().description;
+        updatePlayers: function () {
+          this.data.players = this.data.players.slice();
         },
 
-        nextTurn: function () {
-          game.turns.nextTurn();
+        updateMessage: function () {
+          this.data.message = game.turns.getCurrentStage().description;
+        },
+
+        step: function () {
+          this.stages[this.data.stageIndex].apply(this);
+          if (this.data.stageIndex === 1 && this.connectionsValue * 3 >= this.guessIndex) {
+            this.guessIndex += 1;
+          } else {
+            this.guessIndex = 0;
+            this.nextStage();
+          }
         },
 
         nextStage: function () {
-          if (!game.turns.getStages().next()) {
-            this.nextTurn();
+          if (!game.turns.nextStage()) {
+            game.turns.nextTurn();
           }
           this.updateMessage();
         },

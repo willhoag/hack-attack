@@ -3,7 +3,7 @@
 
   function startConstructor() {
     this.adminDeck = new app.Deck(this.model, 'deck');
-    this.turns = new app.Turns(this.model, app.stagesFactory(app.stages));
+    this.turns = new app.Turns(this.model, app.stages);
     this.passcode = new app.Passcode(this.model);
   }
 

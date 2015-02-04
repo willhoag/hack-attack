@@ -14,8 +14,9 @@
       front: 'images/blank.png',
       back: 'images/blank.png',
     },
-    action: function(player, numOfCards) {
-      // player.computers.splice(0, numOfCards);
+    action: function(player) {
+      player.computers -= player.connected;
+      window.alert('Hacked! You lose ' + player.connected + "computers!");
     }
   };
 
@@ -33,7 +34,9 @@
       back: 'images/blank.png',
     },
     action: function(player) {
-      // player.points += 1;
+      // TODO -- connect to the settings attr above
+      player.points += 1;
+      window.alert('Data Breach! You get 1 point!');
     }
   };
 
@@ -50,8 +53,9 @@
       front: 'images/blank.png',
       back: 'images/blank.png',
     },
-    action: function(admin) {
-      // admin.resetPasscode();
+    action: function(player, game) {
+      game.passcode.regenerate();
+      window.alert('Invalid Password! Passcode has been regenerated!');
     }
   };
 
@@ -68,11 +72,12 @@
       front: 'images/blank.png',
       back: 'images/blank.png',
     },
-    action: function(game) {
-      //game.end();
+    action: function(player, game) {
+      game.end();
+      window.alert('Sever Offline! The Admin has detected your hacking!');
     }
   };
 
   app.adminCards = [hacked, data, invalid, offline];
- 
+
 }(app));

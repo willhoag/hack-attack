@@ -10,12 +10,12 @@
   }
 
   Passcode.prototype.regenerate = function () {
-    this.passcode = Math.floor((Math.random() * Math.pow(10, this.passcodeDigits)) + 1);
+    this.model.passcode = Math.floor((Math.random() * Math.pow(10, this.model.passcodeDigits)) + 1);
   };
 
   // returns difference from actual number
   Passcode.prototype.guess = function (guess) {
-    return this.passcode - parseInt(guess);
+    return this.model.passcode - parseInt(guess);
   };
 
   app.Passcode = Passcode;
