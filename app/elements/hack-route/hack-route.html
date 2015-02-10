@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="hack-route.css">
     <app-router>
       <!-- matches using a path variable -->
-    <app-router mode="pushstate" trailingSlash="ignore">
+    <app-router>
       <app-route path="/:gameId">
         <template>
           <hack-app gameId="{{gameId}}"></hack-app>
